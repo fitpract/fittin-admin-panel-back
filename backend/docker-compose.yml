@@ -3,7 +3,7 @@ services:
     image: postgres
     container_name: database
     volumes:
-      - ./data/db:/var/lib/postgresql/data
+      - pgdbdata:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
@@ -18,3 +18,5 @@ services:
       - '8000:8000'
     depends_on:
       - db
+volumes:
+  pgdbdata: null
