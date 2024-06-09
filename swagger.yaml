@@ -1,0 +1,132 @@
+swagger: '2.0'
+info:
+  title: Django админ панель
+  description: Базовые запросы для админ панели
+  license:
+    name: BSD License
+  version: v1
+host: localhost:8000
+schemes:
+  - http
+basePath: /
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  Basic:
+    type: basic
+security:
+  - Basic: []
+paths:
+  /category/:
+    get:
+      operationId: category_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - category
+    post:
+      operationId: category_create
+      description: ''
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - category
+    parameters: []
+  /category/delete/{id}/:
+    delete:
+      operationId: category_delete_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - category
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+  /login/:
+    post:
+      operationId: login_create
+      description: Вход по полям email и password
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - login
+    parameters: []
+  /logout/:
+    post:
+      operationId: logout_create
+      description: Выход из аккаунта
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - logout
+    parameters: []
+  /product/:
+    get:
+      operationId: product_list
+      description: get и post запросы для
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - product
+    post:
+      operationId: product_create
+      description: get и post запросы для
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - product
+    parameters: []
+  /register/:
+    post:
+      operationId: register_create
+      description: Регистрация. Обязательные поля email, name, password
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - register
+    parameters: []
+  /user/:
+    get:
+      operationId: user_list
+      description: Получение залогининого пользователя
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - user
+    parameters: []
+  /users/:
+    get:
+      operationId: users_list
+      description: Вывод списка пользователей
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - users
+    parameters: []
+definitions: {}
