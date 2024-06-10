@@ -120,7 +120,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'root',
+        'PASSWORD': '1122',
         'HOST': 'database',
         'PORT': 5432,
     }
@@ -159,6 +159,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MEDIA_ROOT = BASE_DIR/'media'
+
+MEDIA_URL = '/media/'
 
 AUTH_USER_MODEL = 'app.User'
 
