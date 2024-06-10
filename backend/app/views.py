@@ -1,6 +1,8 @@
 import datetime
 
 import jwt
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import AuthenticationFailed
@@ -17,6 +19,20 @@ from app.serializers import UserSerializer, ProductSerializer, CategorySerialize
 class UsersAPIView(APIView):
     """Вывод списка пользователей"""
 
+    @swagger_auto_schema(
+        operation_description="Получить список пользователей",
+        manual_parameters=[
+            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id пользователя'),
+            openapi.Parameter('email', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='Почта пользователя'),
+            openapi.Parameter('name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, description='Имя пользователя'),
+            openapi.Parameter('surname', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
+                              description='Фамилия пользователя'),
+            openapi.Parameter('is_staff', in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN,
+                              description='Если значение True, пользователь является админом'),
+
+        ]
+    )
     def get(self, request):
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
@@ -26,6 +42,21 @@ class UsersAPIView(APIView):
 class RegistrationAPIView(APIView):
     """Регистрация. Обязательные поля email, name, password"""
 
+    @swagger_auto_schema(
+        operation_description="Регистрация нового пользователя",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'email': openapi.Schema(type=openapi.TYPE_STRING, description='Email пользователя (обязательное поле)'),
+                'name': openapi.Schema(type=openapi.TYPE_STRING, description='Имя пользователя (обязательное поле)'),
+                'surname': openapi.Schema(type=openapi.TYPE_STRING, description='Фамилия пользователя'),
+                'password': openapi.Schema(type=openapi.TYPE_STRING,
+                                           description='Пароль пользователя(обязательное поле)'),
+                'is_staff': openapi.Schema(type=openapi.TYPE_BOOLEAN,
+                                           description='Если значение True, пользователь является админом'),
+            },
+        )
+    )
     def post(self, request):
         email = request.data.get('email')
 
@@ -41,8 +72,19 @@ class RegistrationAPIView(APIView):
 
 
 class LoginAPIView(APIView):
-    """Вход по полям email и password"""
+    """Вход в аккаунт"""
 
+    @swagger_auto_schema(
+        operation_description="Авторизация пользователя",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'email': openapi.Schema(type=openapi.TYPE_STRING, description='Email пользователя'),
+                'password': openapi.Schema(type=openapi.TYPE_STRING,
+                                           description='Пароль пользователя'),
+            },
+        )
+    )
     def post(self, request):
         email = request.data['email']
         password = request.data['password']
@@ -73,8 +115,22 @@ class LoginAPIView(APIView):
 
 
 class UserAPIView(APIView):
-    """Получение залогининого пользователя"""
+    """Получение авторизованного пользователя"""
 
+    @swagger_auto_schema(
+        operation_description="Получение данных авторизованного пользователя (все параметры, кроме пароля) ",
+        manual_parameters=[
+            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id пользователя'),
+            openapi.Parameter('email', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='Почта пользователя'),
+            openapi.Parameter('name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, description='Имя пользователя'),
+            openapi.Parameter('surname', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
+                              description='Фамилия пользователя'),
+            openapi.Parameter('is_staff', in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN,
+                              description='Если значение True, пользователь является админом'),
+
+        ]
+    )
     def get(self, request):
         token = request.COOKIES.get('jwt')
         if not token:
@@ -92,7 +148,7 @@ class UserAPIView(APIView):
 
 
 class LogoutAPIView(APIView):
-    """Выход из аккаунта"""
+    """Выход из аккаунта, нет полей"""
 
     def post(self, request):
         response = Response()
@@ -105,13 +161,45 @@ class LogoutAPIView(APIView):
 
 
 class ProductAPIView(APIView):
-    """get и post запросы для"""
+    """get и post запросы для товаров"""
 
+    @swagger_auto_schema(
+        operation_description="Получение всех товаров",
+        manual_parameters=[
+            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id пользователя'),
+            openapi.Parameter('name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
+                              description='Название товара'),
+            openapi.Parameter('category_id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='id категории к которой относится товар'),
+            openapi.Parameter('price', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='Цена товара'),
+            openapi.Parameter('count', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='Количество товара'),
+            openapi.Parameter('rating', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='Рейтинг товара'),
+
+        ]
+    )
     def get(self, request):
         products = Product.objects.all()
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
 
+    @swagger_auto_schema(
+        operation_description="Post запрос для товаров",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'name': openapi.Schema(type=openapi.TYPE_STRING,
+                                       description='Название товара (обязательное поле)'),
+                'category_id': openapi.Schema(type=openapi.TYPE_INTEGER,
+                                              description='id категории к которой относится товар (обязательное поле)'),
+                'price': openapi.Schema(type=openapi.TYPE_INTEGER, description='Цена товара (обязательное поле)'),
+                'count': openapi.Schema(type=openapi.TYPE_INTEGER, description='Количество товара (по умолчанию 0)'),
+                'rating': openapi.Schema(type=openapi.TYPE_INTEGER, description='Рейтинг товара (по умолчанию 5)'),
+            },
+        )
+    )
     def post(self, request):
         serializer = ProductSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -121,11 +209,39 @@ class ProductAPIView(APIView):
 
 
 class CategoryAPIView(APIView):
+    """get и post запросы для категорий"""
+
+    @swagger_auto_schema(
+        operation_description="Получение всех категорий",
+        manual_parameters=[
+            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id категории'),
+            openapi.Parameter('name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
+                              description='Название категории'),
+            openapi.Parameter('parent', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
+                              description='Предок категории'),
+            openapi.Parameter('child', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
+                              description='Потомоки категории'),
+
+        ]
+    )
     def get(self, request):
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data)
 
+    @swagger_auto_schema(
+        operation_description="Post запрос для категорий",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'name': openapi.Schema(type=openapi.TYPE_STRING,
+                                       description='Название категории (обязательное поле)'),
+                'parent': openapi.Schema(type=openapi.TYPE_STRING,
+                                         description='Предок категории (по умолчанию пустая строка)'),
+                'child': openapi.Schema(type=openapi.TYPE_STRING, description='Потомоки категории (по умолчанию пусткая строка)'),
+            },
+        )
+    )
     def post(self, request):
         serializer = CategorySerializer(data=request.data)
         if serializer.is_valid():
@@ -145,6 +261,7 @@ class CategoryAPIView(APIView):
 
 
 class CategoryDetailAPIView(APIView):
+    """Удаление категории по id в url запросе"""
     def delete(self, request, pk):
         try:
             category = Category.objects.get(pk=pk)
