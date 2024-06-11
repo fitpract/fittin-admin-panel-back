@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from app.views import RegistrationAPIView, LoginAPIView, ProductAPIView, CategoryAPIView, UsersAPIView, LogoutAPIView, \
     CategoryDetailAPIView, UserAPIView
@@ -32,5 +33,5 @@ urlpatterns = [
     path('category/', CategoryAPIView.as_view()),
     path('category/delete/<int:pk>/', CategoryDetailAPIView.as_view()),
 ]
-
+urlpatterns += staticfiles_urlpatterns()
 urlpatterns += doc_urls
