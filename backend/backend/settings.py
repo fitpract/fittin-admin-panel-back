@@ -120,7 +120,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': '1122',
+        'PASSWORD': 'root',
         'HOST': 'database',
         'PORT': 5432,
     }
@@ -160,7 +160,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MEDIA_ROOT = BASE_DIR/'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
 
