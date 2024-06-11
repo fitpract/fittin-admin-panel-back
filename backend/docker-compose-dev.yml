@@ -14,19 +14,10 @@ services:
     container_name: back
     command: sh -c "gunicorn --bind 0.0.0.0:8000 backend.wsgi"
     build: .
-    expose:
-      - 8000
+    ports:
+      - "8000:8000"
     depends_on:
       - db
-  nginx:
-    container_name: nginx
-    build: ./nginx
-    image: nginx
-    depends_on: 
-      - backend
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx-conf
+      
 volumes:
   pgdbdata:
