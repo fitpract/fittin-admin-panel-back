@@ -7,6 +7,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import TokenError
@@ -19,6 +20,7 @@ from app.serializers import UserSerializer, ProductSerializer, CategorySerialize
 
 
 class UsersAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     """Вывод списка пользователей"""
 
     @swagger_auto_schema(
@@ -36,6 +38,7 @@ class UsersAPIView(APIView):
         ]
     )
     def get(self, request):
+
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
@@ -135,6 +138,7 @@ class UserAPIView(APIView):
         ]
     )
     def get(self, request):
+
         token = request.COOKIES.get('jwt')
         if not token:
             raise AuthenticationFailed('Unauthenticated')
@@ -148,10 +152,13 @@ class UserAPIView(APIView):
         user = User.objects.filter(id=payload['user_id']).first()
         serializer = UserSerializer(user)
 
+        permission_classes = [IsAuthenticated]
+
         return Response(serializer.data)
 
 
 class LogoutAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     """Выход из аккаунта, нет полей"""
 
     def post(self, request):
@@ -165,6 +172,7 @@ class LogoutAPIView(APIView):
 
 
 class ProductAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     """get и post запросы для товаров"""
 
     @swagger_auto_schema(
@@ -213,6 +221,7 @@ class ProductAPIView(APIView):
 
 
 class CategoryAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     """get и post запросы для категорий"""
 
     @swagger_auto_schema(
@@ -265,6 +274,7 @@ class CategoryAPIView(APIView):
 
 
 class CategoryDetailAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     """Удаление категории по id в url запросе"""
     def delete(self, request, pk):
         try:
@@ -288,6 +298,7 @@ class CategoryDetailAPIView(APIView):
 
 
 class OrderViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
