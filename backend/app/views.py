@@ -1,6 +1,7 @@
 import datetime
 
 import jwt
+from django.contrib.auth import authenticate
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, viewsets
@@ -8,6 +9,7 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from app.models import User, Product, Order, OrderedProduct, Category
@@ -92,26 +94,27 @@ class LoginAPIView(APIView):
         user = User.objects.filter(email=email).first()
 
         if user is None:
-            raise AuthenticationFailed('Неправильный email или пароль')
+            return Response({'error': 'Неправильный email или пароль'}, status=status.HTTP_401_UNAUTHORIZED)
+
         if not user.check_password(password):
-            raise AuthenticationFailed('Неправильный email или пароль')
+            return Response({'error': 'Неправильный email или пароль'}, status=status.HTTP_401_UNAUTHORIZED)
 
-        payload = {
-            'id': user.id,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24),
-            'iat': datetime.datetime.utcnow()
-        }
+        try:
+            refresh = RefreshToken.for_user(user)
+            refresh.payload.update({
+                'user_id': user.id,
+                'name': user.name
+            })
+            token = {
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+            }
+            response = Response(token, status=status.HTTP_200_OK)
+            response.set_cookie(key='jwt', value=str(refresh), httponly=True)
+            return response
 
-        token = jwt.encode(payload, 'secret', algorithm='HS256')
-
-        response = Response()
-
-        response.set_cookie(key='jwt', value=token, httponly=True)
-        response.data = {
-            'jwt': token
-        }
-
-        return response
+        except TokenError as e:
+            return Response({'error': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class UserAPIView(APIView):
@@ -136,12 +139,13 @@ class UserAPIView(APIView):
         if not token:
             raise AuthenticationFailed('Unauthenticated')
         try:
-            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+            token_obj = RefreshToken(token)
+            payload = token_obj.payload
 
-        except jwt.ExpiredSignatureError:
+        except TokenError:
             raise AuthenticationFailed('Unauthenticated')
 
-        user = User.objects.filter(id=payload['id']).first()
+        user = User.objects.filter(id=payload['user_id']).first()
         serializer = UserSerializer(user)
 
         return Response(serializer.data)

@@ -7,8 +7,8 @@ class User(AbstractUser):
     id = models.BigAutoField(primary_key=True)
     email = models.EmailField(max_length=100, unique=True, blank=False)
     name = models.CharField('name', max_length=40, blank=False)
-    surname = models.CharField('name', max_length=120, blank=False)
-    password = models.CharField('password', max_length=255)
+    surname = models.CharField('name', max_length=120)
+    password = models.CharField('password', max_length=255, blank=False)
     is_staff = models.BooleanField(default=False)
 
     username = None
@@ -34,7 +34,7 @@ class Product(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField('name', max_length=255, blank=False)
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
-    price = models.IntegerField('price', blank=False)
+    price = models.IntegerField('price', blank=False, default=1)
     count = models.IntegerField('count', default=0)
     rating = models.IntegerField('rating', default=5)
 
@@ -69,7 +69,7 @@ class Storage(models.Model):
     location = models.CharField(max_length=100)
 
     class Meta:
-        db_table = 'Storage'
+        db_table = 'storage'
 
 
 class ProductStorage(models.Model):
@@ -79,7 +79,7 @@ class ProductStorage(models.Model):
     count = models.IntegerField('amount', default=1)
 
     class Meta:
-        db_table = 'ProductStorage'
+        db_table = 'productStorage'
 
 
 class Banner(models.Model):
@@ -90,5 +90,5 @@ class Banner(models.Model):
     description = models.CharField(max_length=100)
 
     class Meta:
-        db_table = 'Banner'
+        db_table = 'banner'
 
