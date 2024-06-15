@@ -32,7 +32,7 @@ class Category(models.Model):
 
 class Product(models.Model):
     id = models.BigAutoField(primary_key=True)
-    name = models.CharField('name', max_length=255, blank=False)
+    name = models.CharField('name', max_length=255, blank=False, unique=True)
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
     price = models.IntegerField('price', blank=False, default=1)
     count = models.IntegerField('count', default=0)

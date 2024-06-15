@@ -44,7 +44,6 @@ class UsersAPIView(APIView):
 
 
 class RegistrationAPIView(APIView):
-    
     """Регистрация. Обязательные поля email, name, password"""
 
     @swagger_auto_schema(
@@ -70,6 +69,7 @@ class RegistrationAPIView(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
         serializer = UserSerializer(data=request.data)
+
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
@@ -112,7 +112,7 @@ class LoginAPIView(APIView):
                 'access': str(refresh.access_token),
             }
             response = Response(token, status=status.HTTP_200_OK)
-            response.set_cookie(key='jwt', value=str(refresh.access_token), httponly=True)
+            response.set_cookie(key='jwt', value=str(refresh), httponly=True)
             return response
 
         except TokenError as e:
@@ -168,7 +168,7 @@ class ProductAPIView(APIView):
     @swagger_auto_schema(
         operation_description="Получение всех товаров",
         manual_parameters=[
-            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id пользователя'),
+            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id товара'),
             openapi.Parameter('name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
                               description='Название товара'),
             openapi.Parameter('category_id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
@@ -208,6 +208,66 @@ class ProductAPIView(APIView):
 
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class ProductAPIViewId(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="Получение товара по id",
+        manual_parameters=[
+            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id товара'),
+            openapi.Parameter('name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
+                              description='Название товара'),
+            openapi.Parameter('category_id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='id категории к которой относится товар'),
+            openapi.Parameter('price', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='Цена товара'),
+            openapi.Parameter('count', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='Количество товара'),
+            openapi.Parameter('rating', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='Рейтинг товара'),
+
+        ]
+    )
+    def get(self, request, pk):
+        """
+        Получение товара по id.
+        """
+        try:
+            product = Product.objects.get(pk=pk)
+            serializer = ProductSerializer(product)
+            return Response(serializer.data)
+        except Product.DoesNotExist:
+            return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    @swagger_auto_schema(
+        operation_description="Изменение товара по id",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'name': openapi.Schema(type=openapi.TYPE_STRING, description='Название товара'),
+                'category_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='id категории'),
+                'price': openapi.Schema(type=openapi.TYPE_INTEGER, description='Цена товара'),
+                'count': openapi.Schema(type=openapi.TYPE_INTEGER, description='Количество товара'),
+                'rating': openapi.Schema(type=openapi.TYPE_INTEGER, description='Рейтинг товара'),
+            },
+        )
+    )
+    def put(self, request, pk):
+        """
+        Изменение товара по id.
+        """
+        try:
+            product = Product.objects.get(pk=pk)
+        except Product.DoesNotExist:
+            return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ProductSerializer(product, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CategoryAPIView(APIView):
@@ -282,13 +342,13 @@ class CategoryAPIViewId(APIView):
 
         ]
     )
-    def get(self, request, category_id):
+    def get(self, request, pk):
 
         """
         Получение категории по id.
         """
         try:
-            category = Category.objects.get(pk=category_id)
+            category = Category.objects.get(pk=pk)
             serializer = CategorySerializer(category)
             return Response(serializer.data)
         except Category.DoesNotExist:
@@ -308,12 +368,12 @@ class CategoryAPIViewId(APIView):
             },
         )
     )
-    def put(self, request, category_id):
+    def put(self, request, pk):
         """
         Изменение категории по id.
         """
         try:
-            category = Category.objects.get(pk=category_id)
+            category = Category.objects.get(pk=pk)
         except Category.DoesNotExist:
             return Response({'error': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
 
