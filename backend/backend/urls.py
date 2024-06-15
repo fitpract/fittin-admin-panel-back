@@ -19,8 +19,10 @@ from django.urls import path
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from app.views import RegistrationAPIView, LoginAPIView, ProductAPIView, CategoryAPIView, UsersAPIView, LogoutAPIView, \
-    UserAPIView, CategoryAPIViewId, ProductAPIViewId
+from app.views import RegistrationAPIView, LoginAPIView, ProductAPIViewDetail, CategoryAPIView, UsersAPIView, \
+    LogoutAPIView, \
+    CategoryDetailAPIView, UserAPIView, CategoryAPIViewId, ProductAPIViewId, BannerAPIView, BannerAPIViewId, \
+    ProductAPIView, BannerAPIViewDetail
 
 from .yasg import urlpatterns as doc_urls
 
@@ -32,8 +34,13 @@ urlpatterns = [
     path('logout/', LogoutAPIView.as_view()),
     path('product/', ProductAPIView.as_view()),
     path('product/<int:pk>/', ProductAPIViewId.as_view()),
+    path('product/delete/<int:pk>/', ProductAPIViewDetail.as_view()),
     path('category/', CategoryAPIView.as_view()),
     path('category/<int:pk>/', CategoryAPIViewId.as_view()),
+    path('category/delete/<int:pk>/', CategoryDetailAPIView.as_view()),
+    path('banner/', BannerAPIView.as_view()),
+    path('banner/<int:pk>/', BannerAPIViewId.as_view()),
+    path('banner/delete/<int:pk>/', BannerAPIViewDetail.as_view()),
 ]
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += doc_urls

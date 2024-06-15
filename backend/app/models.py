@@ -85,10 +85,9 @@ class ProductStorage(models.Model):
 class Banner(models.Model):
     id = models.BigAutoField(primary_key=True)
     product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='media/banner_images/% Y/% m/% d/')
-    header = models.CharField(max_length=100)
-    description = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='media/banner_images/% Y/% m/% d/', default='')
+    header = models.CharField(max_length=100, default='')
+    description = models.CharField(max_length=100, default='')
 
     class Meta:
         db_table = 'banner'
-
