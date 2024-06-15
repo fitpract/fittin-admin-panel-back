@@ -25,7 +25,7 @@ from app.views import RegistrationAPIView, LoginAPIView, ProductAPIView, Categor
 from .yasg import urlpatterns as doc_urls
 
 urlpatterns = [
-    path('register/', RegistrationAPIView.as_view()),
+    path('registration/', RegistrationAPIView.as_view()),
     path('user/', UserAPIView.as_view()),
     path('users/', UsersAPIView.as_view()),
     path('login/', LoginAPIView.as_view()),

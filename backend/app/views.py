@@ -44,6 +44,7 @@ class UsersAPIView(APIView):
 
 
 class RegistrationAPIView(APIView):
+    
     """Регистрация. Обязательные поля email, name, password"""
 
     @swagger_auto_schema(
@@ -69,7 +70,6 @@ class RegistrationAPIView(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
         serializer = UserSerializer(data=request.data)
-
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
@@ -112,7 +112,7 @@ class LoginAPIView(APIView):
                 'access': str(refresh.access_token),
             }
             response = Response(token, status=status.HTTP_200_OK)
-            response.set_cookie(key='jwt', value=str(refresh), httponly=True)
+            response.set_cookie(key='jwt', value=str(refresh.access_token), httponly=True)
             return response
 
         except TokenError as e:
@@ -138,18 +138,10 @@ class UserAPIView(APIView):
         ]
     )
     def get(self, request):
+        permission_classes = [IsAuthenticated]
+        user_id = request.user.id
 
-        token = request.COOKIES.get('jwt')
-        if not token:
-            raise AuthenticationFailed('Unauthenticated')
-        try:
-            token_obj = RefreshToken(token)
-            payload = token_obj.payload
-
-        except TokenError:
-            raise AuthenticationFailed('Unauthenticated')
-
-        user = User.objects.filter(id=payload['user_id']).first()
+        user = User.objects.filter(id=user_id).first()
         serializer = UserSerializer(user)
 
         return Response(serializer.data)
