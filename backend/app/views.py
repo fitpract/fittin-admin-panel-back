@@ -112,7 +112,7 @@ class LoginAPIView(APIView):
                 'access': str(refresh.access_token),
             }
             response = Response(token, status=status.HTTP_200_OK)
-            response.set_cookie(key='jwt', value=str(refresh), httponly=True)
+            response.set_cookie(key='jwt', value=str(token['access']), httponly=True)
             return response
 
         except TokenError as e:
@@ -326,7 +326,7 @@ class CategoryAPIView(APIView):
 
 class CategoryAPIViewId(APIView):
     """
-    Get и post запрос для получения/изменения категории по id.
+    Get, put, delete запросы для получения/изменения/удаления категории по id.
     """
 
     @swagger_auto_schema(
@@ -402,13 +402,18 @@ class CategoryAPIViewId(APIView):
 
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class CategoryDetailAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-    """Удаление категории по id в url запросе"""
+    
+    @swagger_auto_schema(
+        operation_description="Удаление категории по id",
+        manual_parameters=[
+            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id категории')
+        ]
+    )
 
     def delete(self, request, pk):
+        """
+        Удаление категории по id.
+        """
         try:
             category = Category.objects.get(pk=pk)
         except Category.DoesNotExist:

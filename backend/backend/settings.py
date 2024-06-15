@@ -154,6 +154,13 @@ DATABASES = {
         'PASSWORD': 'root',
         'HOST': 'database',
         'PORT': 5432,
+        'TEST': {
+            'NAME': 'test_app',
+        },
+    },
+    'test_app':{
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'test',
     }
 }
 

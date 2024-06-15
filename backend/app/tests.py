@@ -2,6 +2,7 @@ from django.test import TestCase
 from .serializers import UserSerializer
 import json
 
+
 class RegistrationTest(TestCase):
     def test_register(self):
         json_body = {
@@ -14,6 +15,7 @@ class RegistrationTest(TestCase):
                                     json.dumps(json_body),
                                     content_type="application/json")
         self.assertEqual(response.status_code,200)
+
 
 class LoginTest(TestCase):
     def setUp(self):
@@ -65,6 +67,7 @@ class LogoutTest(TestCase):
         self.assertEqual(response.status_code,200)
         self.assertEqual(response.cookies.get('jwt').value,'')
 
+
 class AuthUserTest(TestCase):
     def setUp(self):
         json_user_body = {
@@ -115,12 +118,26 @@ class CategoryTest(TestCase):
         self.client.defaults['HTTP_AUTHORIZATION'] = 'Bearer ' + cookies
     
     def test_category_post(self):
-        pass
-    def test_category_get(self):
-        pass
-    def test_category_put(self):
-        pass
-    def test_category_delete(self):
-        pass
+        #post
+        json_category = {
+            'name':'hat',
+        }
+        response = self.client.post('/category/',
+                        json.dumps(json_category),
+                        content_type="application/json")
+        self.assertEqual(response.status_code,201)
+        #get
+        response = self.client.get('/category/')
+        print(response.data)
+        self.assertEqual(response.status_code,200)
+        #put
+        json_category = {
+            'name':'boots',
+        }
+        response = self.client.put('/category/1/')
+        self.assertEqual(response.status_code,200)
+        #delete
+        response = self.client.delete('/category/1/')
+        self.assertEqual(response.status_code,204)
 
 
