@@ -20,7 +20,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from app.views import RegistrationAPIView, LoginAPIView, ProductAPIView, CategoryAPIView, UsersAPIView, LogoutAPIView, \
-    CategoryDetailAPIView, UserAPIView
+    CategoryDetailAPIView, UserAPIView, CategoryAPIViewId
 
 from .yasg import urlpatterns as doc_urls
 
@@ -32,6 +32,7 @@ urlpatterns = [
     path('logout/', LogoutAPIView.as_view()),
     path('product/', ProductAPIView.as_view()),
     path('category/', CategoryAPIView.as_view()),
+    path('category/<int:pk>/', CategoryAPIViewId.as_view()),
     path('category/delete/<int:pk>/', CategoryDetailAPIView.as_view()),
 ]
 urlpatterns += staticfiles_urlpatterns()
