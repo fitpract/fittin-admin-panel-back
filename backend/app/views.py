@@ -38,7 +38,6 @@ class UsersAPIView(APIView):
         ]
     )
     def get(self, request):
-
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
@@ -121,6 +120,7 @@ class LoginAPIView(APIView):
 
 
 class UserAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     """Получение авторизованного пользователя"""
 
     @swagger_auto_schema(
@@ -151,8 +151,6 @@ class UserAPIView(APIView):
 
         user = User.objects.filter(id=payload['user_id']).first()
         serializer = UserSerializer(user)
-
-        permission_classes = [IsAuthenticated]
 
         return Response(serializer.data)
 
@@ -206,7 +204,7 @@ class ProductAPIView(APIView):
                                        description='Название товара (обязательное поле)'),
                 'category_id': openapi.Schema(type=openapi.TYPE_INTEGER,
                                               description='id категории к которой относится товар (обязательное поле)'),
-                'price': openapi.Schema(type=openapi.TYPE_INTEGER, description='Цена товара (обязательное поле)'),
+                'price': openapi.Schema(type=openapi.TYPE_INTEGER, description='Цена товара (обязательное)'),
                 'count': openapi.Schema(type=openapi.TYPE_INTEGER, description='Количество товара (по умолчанию 0)'),
                 'rating': openapi.Schema(type=openapi.TYPE_INTEGER, description='Рейтинг товара (по умолчанию 5)'),
             },
@@ -251,7 +249,8 @@ class CategoryAPIView(APIView):
                                        description='Название категории (обязательное поле)'),
                 'parent': openapi.Schema(type=openapi.TYPE_STRING,
                                          description='Предок категории (по умолчанию пустая строка)'),
-                'child': openapi.Schema(type=openapi.TYPE_STRING, description='Потомоки категории (по умолчанию пусткая строка)'),
+                'child': openapi.Schema(type=openapi.TYPE_STRING,
+                                        description='Потомоки категории (по умолчанию пусткая строка)'),
             },
         )
     )
@@ -273,9 +272,90 @@ class CategoryAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class CategoryAPIViewId(APIView):
+    """
+    Get и post запрос для получения/изменения категории по id.
+    """
+
+    @swagger_auto_schema(
+        operation_description="Получение категории по id",
+        manual_parameters=[
+            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id категории'),
+            openapi.Parameter('name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
+                              description='Название категории'),
+            openapi.Parameter('parent', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
+                              description='Предок категории'),
+            openapi.Parameter('child', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
+                              description='Потомоки категории'),
+
+        ]
+    )
+    def get(self, request, category_id):
+
+        """
+        Получение категории по id.
+        """
+        try:
+            category = Category.objects.get(pk=category_id)
+            serializer = CategorySerializer(category)
+            return Response(serializer.data)
+        except Category.DoesNotExist:
+            return Response({'error': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    @swagger_auto_schema(
+        operation_description="Изменение категории по id",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'name': openapi.Schema(type=openapi.TYPE_STRING,
+                                       description='Название категории(можно изменить'),
+                'parent': openapi.Schema(type=openapi.TYPE_STRING,
+                                         description='Предок категории (можно изменить)'),
+                'child': openapi.Schema(type=openapi.TYPE_STRING,
+                                        description='Потомоки категории (лучше не менять)'),
+            },
+        )
+    )
+    def put(self, request, category_id):
+        """
+        Изменение категории по id.
+        """
+        try:
+            category = Category.objects.get(pk=category_id)
+        except Category.DoesNotExist:
+            return Response({'error': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = CategorySerializer(category, data=request.data, partial=True)
+        if serializer.is_valid():
+            previous_parent_name = category.parent
+
+            serializer.save()
+
+            if previous_parent_name:
+                try:
+                    parent_category = Category.objects.get(name=previous_parent_name)
+                    parent_category.child = parent_category.child.replace(f", {category.name}", "")
+                    parent_category.child = parent_category.child.strip(", ")
+                    parent_category.save()
+                except Category.DoesNotExist:
+                    pass
+            new_parent_name = request.data.get('parent')
+            if new_parent_name:
+                try:
+                    new_parent_category = Category.objects.get(name=new_parent_name)
+                    new_parent_category.child = f"{new_parent_category.child}, {category.name}" if new_parent_category.child else category.name
+                    new_parent_category.save()
+                except Category.DoesNotExist:
+                    return Response({'error': 'Parent category not found'}, status=status.HTTP_404_NOT_FOUND)
+
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class CategoryDetailAPIView(APIView):
     permission_classes = [IsAuthenticated]
     """Удаление категории по id в url запросе"""
+
     def delete(self, request, pk):
         try:
             category = Category.objects.get(pk=pk)
