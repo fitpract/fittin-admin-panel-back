@@ -187,7 +187,7 @@ class ProductAPIView(APIView):
         return Response(serializer.data)
 
     @swagger_auto_schema(
-        operation_description="Post запрос для товаров",
+        operation_description="Создание товара",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
@@ -311,7 +311,7 @@ class CategoryAPIView(APIView):
         return Response(serializer.data)
 
     @swagger_auto_schema(
-        operation_description="Post запрос для категорий",
+        operation_description="Добавление новой категории",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
@@ -418,7 +418,7 @@ class CategoryDetailAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @swagger_auto_schema(
-        operation_description="Получение категории по id",
+        operation_description="Удаление категории по id",
         manual_parameters=[
             openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id категории'),
         ]
@@ -551,7 +551,7 @@ class BannerDetailAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @swagger_auto_schema(
-        operation_description="Изменение баннера по id",
+        operation_description="Удаление баннера по id",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
