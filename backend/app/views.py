@@ -16,15 +16,15 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from app.models import User, Product, Order, OrderedProduct, Category, Banner
 
 from app.serializers import UserSerializer, ProductSerializer, BannerSerializer, OrderSerializer, \
-    OrderedProductSerializer,CategorySerializer
+    OrderedProductSerializer, CategorySerializer
 
 
 class UsersAPIView(APIView):
-    permission_classes = [IsAuthenticated]
     """Вывод списка пользователей"""
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
-        operation_description="Получить список пользователей",
+        operation_description="Получение всех пользователей",
         manual_parameters=[
             openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id пользователя'),
             openapi.Parameter('email', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
@@ -44,7 +44,7 @@ class UsersAPIView(APIView):
 
 
 class RegistrationAPIView(APIView):
-    """Регистрация. Обязательные поля email, name, password"""
+    """Регистрация нового пользователя"""
 
     @swagger_auto_schema(
         operation_description="Регистрация нового пользователя",
@@ -120,8 +120,8 @@ class LoginAPIView(APIView):
 
 
 class UserAPIView(APIView):
-    permission_classes = [IsAuthenticated]
     """Получение авторизованного пользователя"""
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         operation_description="Получение данных авторизованного пользователя (все параметры, кроме пароля) ",
@@ -147,8 +147,8 @@ class UserAPIView(APIView):
 
 
 class LogoutAPIView(APIView):
-    permission_classes = [IsAuthenticated]
     """Выход из аккаунта, нет полей"""
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         response = Response()
@@ -161,8 +161,8 @@ class LogoutAPIView(APIView):
 
 
 class ProductAPIView(APIView):
+    """Получение/создание товаров"""
     permission_classes = [IsAuthenticated]
-    """get и post запросы для товаров"""
 
     @swagger_auto_schema(
         operation_description="Получение всех товаров",
@@ -178,6 +178,8 @@ class ProductAPIView(APIView):
                               description='Количество товара'),
             openapi.Parameter('rating', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
                               description='Рейтинг товара'),
+            openapi.Parameter('image', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
+                              description='Изображение товара'),
 
         ]
     )
@@ -187,7 +189,7 @@ class ProductAPIView(APIView):
         return Response(serializer.data)
 
     @swagger_auto_schema(
-        operation_description="Создание товара",
+        operation_description="Создание нового товара",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
@@ -195,9 +197,11 @@ class ProductAPIView(APIView):
                                        description='Название товара (обязательное поле)'),
                 'category_id': openapi.Schema(type=openapi.TYPE_INTEGER,
                                               description='id категории к которой относится товар (обязательное поле)'),
-                'price': openapi.Schema(type=openapi.TYPE_INTEGER, description='Цена товара (обязательное)'),
+                'price': openapi.Schema(type=openapi.TYPE_INTEGER, description='Цена товара (обязательное поле)'),
                 'count': openapi.Schema(type=openapi.TYPE_INTEGER, description='Количество товара (по умолчанию 0)'),
                 'rating': openapi.Schema(type=openapi.TYPE_INTEGER, description='Рейтинг товара (по умолчанию 5)'),
+                'image': openapi.Schema(type=openapi.TYPE_STRING, description='Изображение товара (по умолчанию None)'),
+
             },
         )
     )
@@ -207,12 +211,11 @@ class ProductAPIView(APIView):
 
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-  
+
 
 class ProductDetailAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
     """Получение/изменение товара по id"""
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         operation_description="Получение товара по id",
@@ -228,11 +231,12 @@ class ProductDetailAPIView(APIView):
                               description='Количество товара'),
             openapi.Parameter('rating', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
                               description='Рейтинг товара'),
+            openapi.Parameter('image', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
+                              description='Изображение товара'),
 
         ]
     )
     def get(self, request, pk):
-        """Получение товара по id."""
 
         try:
             product = Product.objects.get(pk=pk)
@@ -251,11 +255,11 @@ class ProductDetailAPIView(APIView):
                 'price': openapi.Schema(type=openapi.TYPE_INTEGER, description='Цена товара'),
                 'count': openapi.Schema(type=openapi.TYPE_INTEGER, description='Количество товара'),
                 'rating': openapi.Schema(type=openapi.TYPE_INTEGER, description='Рейтинг товара'),
+                'image': openapi.Schema(type=openapi.TYPE_STRING, description='Изображение товара'),
             },
         )
     )
     def put(self, request, pk):
-        """ Изменение товара по id."""
 
         try:
             product = Product.objects.get(pk=pk)
@@ -267,7 +271,7 @@ class ProductDetailAPIView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     @swagger_auto_schema(
         operation_description="Удаление товара по id",
         request_body=openapi.Schema(
@@ -278,7 +282,6 @@ class ProductDetailAPIView(APIView):
         )
     )
     def delete(self, request, pk):
-        """Удаляет товар по его id."""
         try:
             product = Product.objects.get(pk=pk)
         except Product.DoesNotExist:
@@ -289,8 +292,8 @@ class ProductDetailAPIView(APIView):
 
 
 class CategoryAPIView(APIView):
+    """Получение/создание категорий"""
     permission_classes = [IsAuthenticated]
-    """get и post запросы для категорий"""
 
     @swagger_auto_schema(
         operation_description="Получение всех категорий",
@@ -343,8 +346,8 @@ class CategoryAPIView(APIView):
 
 
 class CategoryDetailAPIView(APIView):
+    """Получение/изменение категории по id"""
     permission_classes = [IsAuthenticated]
-    """ Get и post запрос для получения/изменения категории по id."""
 
     @swagger_auto_schema(
         operation_description="Получение категории по id",
@@ -360,7 +363,6 @@ class CategoryDetailAPIView(APIView):
         ]
     )
     def get(self, request, pk):
-        """Получение категории по id."""
 
         try:
             category = Category.objects.get(pk=pk)
@@ -384,7 +386,6 @@ class CategoryDetailAPIView(APIView):
         )
     )
     def put(self, request, pk):
-        """Изменение категории по id."""
 
         try:
             category = Category.objects.get(pk=pk)
@@ -416,16 +417,14 @@ class CategoryDetailAPIView(APIView):
 
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     @swagger_auto_schema(
         operation_description="Удаление категории по id",
         manual_parameters=[
             openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id категории'),
         ]
     )
-
     def delete(self, request, pk):
-        """Удаление категории по id в url запросе"""
 
         try:
             category = Category.objects.get(pk=pk)
@@ -448,8 +447,8 @@ class CategoryDetailAPIView(APIView):
 
 
 class BannerAPIView(APIView):
+    """Получение/создание баннеров"""
     permission_classes = [IsAuthenticated]
-    """Get и post запросы для баннеров"""
 
     @swagger_auto_schema(
         operation_description="Получение всех баннеров",
@@ -458,36 +457,33 @@ class BannerAPIView(APIView):
             openapi.Parameter('product_id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
                               description='id товара'),
             openapi.Parameter('image', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
-                              description='Изображение/ссылка на изображение?'),
+                              description='Изображение баннера'),
             openapi.Parameter('header', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
-                              description='хэдер'),
+                              description='Заголовок баннера'),
             openapi.Parameter('description', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
                               description='Описание баннера'),
 
         ]
     )
     def get(self, request):
-        """Получение всех баннеров."""
-
         banners = Banner.objects.all()
         serializer = BannerSerializer(banners, many=True)
         return Response(serializer.data)
 
     @swagger_auto_schema(
-        operation_description="Post запрос для баннеров.",
+        operation_description="Создание нового баннера",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
-                'product_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='id товара'),
-                'image': openapi.Schema(type=openapi.TYPE_STRING, description='Изображение/ссылка на изображение?'),
-                'header': openapi.Schema(type=openapi.TYPE_STRING, description='хэдер'),
+                'product_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='id продукта'),
+                'image': openapi.Schema(type=openapi.TYPE_STRING,
+                                        description='Изображение баннера (по умолчанию Null) '),
+                'header': openapi.Schema(type=openapi.TYPE_STRING, description='Заголовок баннера'),
                 'description': openapi.Schema(type=openapi.TYPE_STRING, description='Описание баннера'),
             },
         )
     )
     def post(self, request):
-        """Создание нового баннера."""
-
         serializer = BannerSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -506,17 +502,15 @@ class BannerDetailAPIView(APIView):
             openapi.Parameter('product_id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
                               description='id товара'),
             openapi.Parameter('image', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
-                              description='Изображение'),
+                              description='Изображение баннера'),
             openapi.Parameter('header', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
-                              description='Заголовок'),
+                              description='Заголовок баннера'),
             openapi.Parameter('description', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
                               description='Описание баннера'),
 
         ]
     )
     def get(self, request, pk):
-        """ Получение баннера по id."""
-
         try:
             banner = Banner.objects.get(pk=pk)
             serializer = BannerSerializer(banner)
@@ -530,14 +524,13 @@ class BannerDetailAPIView(APIView):
             type=openapi.TYPE_OBJECT,
             properties={
                 'product_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='id товара'),
-                'image': openapi.Schema(type=openapi.TYPE_STRING, description='Изображение'),
-                'header': openapi.Schema(type=openapi.TYPE_STRING, description='Заголовок'),
+                'image': openapi.Schema(type=openapi.TYPE_STRING, description='Изображение баннера'),
+                'header': openapi.Schema(type=openapi.TYPE_STRING, description='Заголовок баннера'),
                 'description': openapi.Schema(type=openapi.TYPE_STRING, description='Описание баннера'),
             },
         )
     )
     def put(self, request, pk):
-        """Изменение баннера по id."""
 
         try:
             banner = Banner.objects.get(pk=pk)
@@ -549,7 +542,7 @@ class BannerDetailAPIView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     @swagger_auto_schema(
         operation_description="Удаление баннера по id",
         request_body=openapi.Schema(
@@ -560,7 +553,6 @@ class BannerDetailAPIView(APIView):
         )
     )
     def delete(self, request, pk):
-        """Удаляет баннер по его id."""
         try:
             banner = Banner.objects.get(pk=pk)
         except Banner.DoesNotExist:
@@ -569,7 +561,7 @@ class BannerDetailAPIView(APIView):
         banner.delete()
         return Response("success", status=status.HTTP_204_NO_CONTENT)
 
-    
+
 class OrderViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = Order.objects.all()
