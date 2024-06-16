@@ -16,7 +16,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from app.models import User, Product, Order, OrderedProduct, Category, Banner
 
 from app.serializers import UserSerializer, ProductSerializer, BannerSerializer, OrderSerializer, \
-    OrderedProductSerializer
+    OrderedProductSerializer,CategorySerializer
 
 
 class UsersAPIView(APIView):
@@ -207,24 +207,9 @@ class ProductAPIView(APIView):
 
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+  
 
-
-class ProductAPIViewDetail(APIView):
-    permission_classes = [IsAuthenticated]
-    """Удаление товара по его id."""
-
-    def delete(self, request, pk):
-        """Удаляет товар по его id."""
-        try:
-            product = Product.objects.get(pk=pk)
-        except Product.DoesNotExist:
-            return Response({'error': 'Товар не найден.'}, status=status.HTTP_404_NOT_FOUND)
-
-        product.delete()
-        return Response("success", status=status.HTTP_204_NO_CONTENT)
-
-
-class ProductAPIViewId(APIView):
+class ProductDetailAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     """Получение/изменение товара по id"""
@@ -282,6 +267,25 @@ class ProductAPIViewId(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @swagger_auto_schema(
+        operation_description="Удаление товара по id",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'id': openapi.Schema(type=openapi.TYPE_STRING, description='id товара'),
+            },
+        )
+    )
+    def delete(self, request, pk):
+        """Удаляет товар по его id."""
+        try:
+            product = Product.objects.get(pk=pk)
+        except Product.DoesNotExist:
+            return Response({'error': 'Товар не найден.'}, status=status.HTTP_404_NOT_FOUND)
+
+        product.delete()
+        return Response("success", status=status.HTTP_204_NO_CONTENT)
 
 
 class CategoryAPIView(APIView):
@@ -303,7 +307,7 @@ class CategoryAPIView(APIView):
     )
     def get(self, request):
         categories = Category.objects.all()
-        serializer = BannerSerializer(categories, many=True)
+        serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data)
 
     @swagger_auto_schema(
@@ -321,7 +325,7 @@ class CategoryAPIView(APIView):
         )
     )
     def post(self, request):
-        serializer = BannerSerializer(data=request.data)
+        serializer = CategorySerializer(data=request.data)
         if serializer.is_valid():
             new_category = serializer.save()
 
@@ -338,7 +342,8 @@ class CategoryAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CategoryAPIViewId(APIView):
+class CategoryDetailAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     """ Get и post запрос для получения/изменения категории по id."""
 
     @swagger_auto_schema(
@@ -359,7 +364,7 @@ class CategoryAPIViewId(APIView):
 
         try:
             category = Category.objects.get(pk=pk)
-            serializer = BannerSerializer(category)
+            serializer = CategorySerializer(category)
             return Response(serializer.data)
         except Category.DoesNotExist:
             return Response({'error': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -386,7 +391,7 @@ class CategoryAPIViewId(APIView):
         except Category.DoesNotExist:
             return Response({'error': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = BannerSerializer(category, data=request.data, partial=True)
+        serializer = CategorySerializer(category, data=request.data, partial=True)
         if serializer.is_valid():
             previous_parent_name = category.parent
 
@@ -411,13 +416,17 @@ class CategoryAPIViewId(APIView):
 
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class CategoryDetailAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-    """Удаление категории по id в url запросе"""
+    
+    @swagger_auto_schema(
+        operation_description="Получение категории по id",
+        manual_parameters=[
+            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id категории'),
+        ]
+    )
 
     def delete(self, request, pk):
+        """Удаление категории по id в url запросе"""
+
         try:
             category = Category.objects.get(pk=pk)
         except Category.DoesNotExist:
@@ -486,7 +495,7 @@ class BannerAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class BannerAPIViewId(APIView):
+class BannerDetailAPIView(APIView):
     """Получение/изменение баннера по id"""
     permission_classes = [IsAuthenticated]
 
@@ -540,12 +549,16 @@ class BannerAPIViewId(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class BannerAPIViewDetail(APIView):
-    permission_classes = [IsAuthenticated]
-    """Удаление баннера по его id."""
-
+    
+    @swagger_auto_schema(
+        operation_description="Изменение баннера по id",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'id': openapi.Schema(type=openapi.TYPE_INTEGER, description='id банера'),
+            },
+        )
+    )
     def delete(self, request, pk):
         """Удаляет баннер по его id."""
         try:
@@ -556,7 +569,7 @@ class BannerAPIViewDetail(APIView):
         banner.delete()
         return Response("success", status=status.HTTP_204_NO_CONTENT)
 
-
+    
 class OrderViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = Order.objects.all()

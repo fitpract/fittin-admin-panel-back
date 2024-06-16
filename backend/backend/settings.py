@@ -33,7 +33,7 @@ SECRET_KEY = env('SECRET_KEY', 'django-insecure-@59&@o*os54$n1_2!g^j7w8m=j2mf@dn
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG', True)
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", ['localhost', '127.0.0.1', '0.0.0.0', 'localhost:54346'])
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", ['fittinadminpanel.ru','www.fittinadminpanel.ru','localhost', '127.0.0.1', '0.0.0.0'])
 
 # Application definition
 
@@ -77,17 +77,15 @@ SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False
 }
 
-CORS_ORIGINAL_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:54346"
-]
+
 
 ROOT_URLCONF = 'backend.urls'
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=60),
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(hours=6),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
@@ -154,13 +152,6 @@ DATABASES = {
         'PASSWORD': 'root',
         'HOST': 'database',
         'PORT': 5432,
-        'TEST': {
-            'NAME': 'test_app',
-        },
-    },
-    'test_app':{
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'test',
     }
 }
 
