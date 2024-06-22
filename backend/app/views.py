@@ -213,7 +213,7 @@ class ProductAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class ProductDetailAPIView(APIView):
+class ProductAPIViewDetail(APIView):
     """Получение/изменение товара по id"""
     permission_classes = [IsAuthenticated]
 
@@ -291,6 +291,92 @@ class ProductDetailAPIView(APIView):
         return Response("success", status=status.HTTP_204_NO_CONTENT)
 
 
+class ProductAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    """get и post запросы для товаров"""
+
+    @swagger_auto_schema(
+        operation_description="Получение всех товаров",
+        manual_parameters=[
+            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id товара'),
+            openapi.Parameter('name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
+                              description='Название товара'),
+            openapi.Parameter('category_id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='id категории к которой относится товар'),
+            openapi.Parameter('price', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='Цена товара'),
+            openapi.Parameter('count', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='Количество товара'),
+            openapi.Parameter('rating', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='Рейтинг товара'),
+
+        ]
+    )
+    def get(self, request):
+        products = Product.objects.all()
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
+
+    @swagger_auto_schema(
+        operation_description="Post запрос для товаров",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_ARRAY,
+            items=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'name': openapi.Schema(type=openapi.TYPE_STRING,
+                                           description='Название товара (обязательное поле)'),
+                    'category_id': openapi.Schema(type=openapi.TYPE_INTEGER,
+                                                  description='id категории к которой относится '
+                                                              'товар (обязательное поле)'),
+                    'price': openapi.Schema(type=openapi.TYPE_INTEGER, description='Цена товара (обязательное)'),
+                    'count': openapi.Schema(type=openapi.TYPE_INTEGER,
+                                            description='Количество товара (по умолчанию 0)'),
+                    'rating': openapi.Schema(type=openapi.TYPE_INTEGER, description='Рейтинг товара (по умолчанию 5)'),
+                },
+            )
+        )
+    )
+    def post(self, request):
+        serializer = ProductSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class ProductListAPIView(APIView):
+    @swagger_auto_schema(
+        operation_description="Post запрос для добавления списка товаров",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_ARRAY,
+            items=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'name': openapi.Schema(type=openapi.TYPE_STRING,
+                                           description='Название товара (обязательное поле)'),
+                    'category_id': openapi.Schema(type=openapi.TYPE_INTEGER,
+                                                  description='id категории к которой относится '
+                                                              'товар (обязательное поле)'),
+                    'price': openapi.Schema(type=openapi.TYPE_INTEGER, description='Цена товара (обязательное)'),
+                    'count': openapi.Schema(type=openapi.TYPE_INTEGER,
+                                            description='Количество товара (по умолчанию 0)'),
+                    'rating': openapi.Schema(type=openapi.TYPE_INTEGER, description='Рейтинг товара (по умолчанию 5)'),
+                },
+            )
+        )
+    )
+    def post(self, request):
+        if not isinstance(request.data, list):
+            return Response({"error": "Данные должны быть в виде списка"}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = ProductSerializer(data=request.data, many=True)
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
 class CategoryAPIView(APIView):
     """Получение/создание категорий"""
     permission_classes = [IsAuthenticated]
@@ -345,7 +431,7 @@ class CategoryAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CategoryDetailAPIView(APIView):
+class CategoryAPIViewDetail(APIView):
     """Получение/изменение категории по id"""
     permission_classes = [IsAuthenticated]
 
@@ -491,7 +577,7 @@ class BannerAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class BannerDetailAPIView(APIView):
+class BannerAPIViewDetail(APIView):
     """Получение/изменение баннера по id"""
     permission_classes = [IsAuthenticated]
 
