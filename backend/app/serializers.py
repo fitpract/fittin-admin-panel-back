@@ -6,9 +6,10 @@ from .models import Category, Product, Order, OrderedProduct, User, Banner
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'email', 'name', 'surname', 'password', "is_staff"]
+        fields = ['id', 'email', 'name', 'surname', 'password', 'is_staff', 'code']
         extra_kwargs = {
-            'password': {'write_only': True}
+            'password': {'write_only': True},
+            'code': {'write_only': True}
         }
 
     def create(self, validated_data):
