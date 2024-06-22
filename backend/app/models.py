@@ -10,7 +10,9 @@ class User(AbstractUser):
     surname = models.CharField('name', max_length=120, blank=True)
     password = models.CharField('password', max_length=255, blank=False)
     is_staff = models.BooleanField(default=False)
+
     code = models.CharField(default='')
+    code_expiration_time = models.DateTimeField(null=True, blank=True)
 
     username = None
 
