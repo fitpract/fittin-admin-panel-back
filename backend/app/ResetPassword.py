@@ -1,4 +1,5 @@
 from django.core.mail import send_mail
+from django.utils import timezone
 from django.utils.crypto import get_random_string
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -14,7 +15,8 @@ class ResetPassword(APIView):
         operation_description="Отправление кода для изменения пароля на почту, которую вы указываете в url запроса",
         manual_parameters=[
             openapi.Parameter('message', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
-                              description='Код для сброса пароля отправлен на вашу почту'),
+                              description=
+                              'Код для сброса пароля отправлен на вашу почту. Он действителен в течение 30 минут'),
         ]
     )
     def get(self, request, email):
@@ -26,17 +28,19 @@ class ResetPassword(APIView):
         code = get_random_string(length=6)
 
         user.code = code
+        user.code_expiration_time = timezone.now() + timezone.timedelta(minutes=30)
         user.save()
 
         send_mail(
             'Сброс пароля',
-            f'Ваш код для сброса пароля: {code}',
+            f'Ваш код для сброса пароля: {code}. Он действителен в течение 30 минут.',
             'fittinaddmin@yandex.ru',
             [email],
             fail_silently=False
         )
 
-        return Response({'message': 'Код для сброса пароля отправлен на вашу почту'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Код для сброса пароля отправлен на вашу почту. Он действителен в течение 30 минут'},
+                        status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
         operation_description="Изменение пароля по почте",
@@ -46,18 +50,20 @@ class ResetPassword(APIView):
                 'code': openapi.Schema(type=openapi.TYPE_STRING,
                                        description='Указываете code, который пришёл на почту'),
                 'new_password': openapi.Schema(type=openapi.TYPE_STRING,
-                                       description='Новый парооль'),
+                                               description='Новый пароль'),
             },
         )
     )
     def post(self, request, email):
-
         code = request.data.get('code')
 
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             return Response({'error': 'Пользователь не найден'}, status=status.HTTP_404_NOT_FOUND)
+
+        if user.code_expiration_time < timezone.now():
+            return Response({'error': 'Срок действия кода истек'}, status=status.HTTP_400_BAD_REQUEST)
 
         if user.code != code:
             return Response({'error': 'Неверный код'}, status=status.HTTP_400_BAD_REQUEST)
@@ -68,6 +74,8 @@ class ResetPassword(APIView):
         user.save()
 
         user.code = ''
+        user.code_expiration_time = None
         user.save()
 
-        return Response({'message': 'Пароль успешно изменен'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Ваш пароль успешно изменён'}, status=status.HTTP_200_OK)
+

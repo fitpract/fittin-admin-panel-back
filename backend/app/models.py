@@ -10,7 +10,9 @@ class User(AbstractUser):
     surname = models.CharField('name', max_length=120, blank=True)
     password = models.CharField('password', max_length=255, blank=False)
     is_staff = models.BooleanField(default=False)
+
     code = models.CharField(default='')
+    code_expiration_time = models.DateTimeField(null=True, blank=True)
 
     username = None
 
@@ -38,6 +40,7 @@ class Product(models.Model):
     price = models.IntegerField('price', blank=False, default=1)
     count = models.IntegerField('count', default=0)
     rating = models.IntegerField('rating', default=5)
+    images = models.ImageField(upload_to='media/product_image/% Y/% m/% d/', default=None)
 
     class Meta:
         db_table = 'product'
@@ -88,7 +91,7 @@ class Banner(models.Model):
     product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='media/banner_images/% Y/% m/% d/', default='')
     header = models.CharField(max_length=100, default='')
-    description = models.CharField(max_length=100, default='')
+    description = models.CharField(max_length=100, default=None)
 
     class Meta:
         db_table = 'banner'
