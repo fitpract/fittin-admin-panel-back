@@ -197,10 +197,14 @@ class ProductAPIView(APIView):
                                        description='Название товара (обязательное поле)'),
                 'category_id': openapi.Schema(type=openapi.TYPE_INTEGER,
                                               description='id категории к которой относится товар (обязательное поле)'),
-                'price': openapi.Schema(type=openapi.TYPE_INTEGER, description='Цена товара (обязательное поле)'),
-                'count': openapi.Schema(type=openapi.TYPE_INTEGER, description='Количество товара (по умолчанию 0)'),
-                'rating': openapi.Schema(type=openapi.TYPE_INTEGER, description='Рейтинг товара (по умолчанию 5)'),
-                'image': openapi.Schema(type=openapi.TYPE_STRING, description='Изображение товара (по умолчанию None)'),
+                'price': openapi.Schema(type=openapi.TYPE_INTEGER,
+                                        description='Цена товара (обязательное поле)'),
+                'count': openapi.Schema(type=openapi.TYPE_INTEGER,
+                                        description='Количество товара (по умолчанию 0)'),
+                'rating': openapi.Schema(type=openapi.TYPE_INTEGER,
+                                         description='Рейтинг товара (по умолчанию 5)'),
+                'image': openapi.Schema(type=openapi.TYPE_STRING,
+                                        description='Изображение товара (по умолчанию null)'),
 
             },
         )
@@ -243,15 +247,18 @@ class ProductAPIViewDetail(APIView):
             serializer = ProductSerializer(product)
             return Response(serializer.data)
         except Product.DoesNotExist:
-            return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Товар не найден'}, status=status.HTTP_404_NOT_FOUND)
 
     @swagger_auto_schema(
         operation_description="Изменение товара по id",
+        manual_parameters=[
+            openapi.Parameter('id', in_=openapi.IN_PATH, type=openapi.TYPE_INTEGER, description='id заказа'),
+        ],
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
                 'name': openapi.Schema(type=openapi.TYPE_STRING, description='Название товара'),
-                'category_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='id категории'),
+                'category': openapi.Schema(type=openapi.TYPE_INTEGER, description='id категории'),
                 'price': openapi.Schema(type=openapi.TYPE_INTEGER, description='Цена товара'),
                 'count': openapi.Schema(type=openapi.TYPE_INTEGER, description='Количество товара'),
                 'rating': openapi.Schema(type=openapi.TYPE_INTEGER, description='Рейтинг товара'),
@@ -264,7 +271,7 @@ class ProductAPIViewDetail(APIView):
         try:
             product = Product.objects.get(pk=pk)
         except Product.DoesNotExist:
-            return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Товар не найден'}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = ProductSerializer(product, data=request.data, partial=True)
         if serializer.is_valid():
@@ -291,63 +298,9 @@ class ProductAPIViewDetail(APIView):
         return Response("success", status=status.HTTP_204_NO_CONTENT)
 
 
-class ProductAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-    """get и post запросы для товаров"""
-
-    @swagger_auto_schema(
-        operation_description="Получение всех товаров",
-        manual_parameters=[
-            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id товара'),
-            openapi.Parameter('name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
-                              description='Название товара'),
-            openapi.Parameter('category_id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
-                              description='id категории к которой относится товар'),
-            openapi.Parameter('price', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
-                              description='Цена товара'),
-            openapi.Parameter('count', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
-                              description='Количество товара'),
-            openapi.Parameter('rating', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
-                              description='Рейтинг товара'),
-
-        ]
-    )
-    def get(self, request):
-        products = Product.objects.all()
-        serializer = ProductSerializer(products, many=True)
-        return Response(serializer.data)
-
-    @swagger_auto_schema(
-        operation_description="Post запрос для товаров",
-        request_body=openapi.Schema(
-            type=openapi.TYPE_ARRAY,
-            items=openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    'name': openapi.Schema(type=openapi.TYPE_STRING,
-                                           description='Название товара (обязательное поле)'),
-                    'category_id': openapi.Schema(type=openapi.TYPE_INTEGER,
-                                                  description='id категории к которой относится '
-                                                              'товар (обязательное поле)'),
-                    'price': openapi.Schema(type=openapi.TYPE_INTEGER, description='Цена товара (обязательное)'),
-                    'count': openapi.Schema(type=openapi.TYPE_INTEGER,
-                                            description='Количество товара (по умолчанию 0)'),
-                    'rating': openapi.Schema(type=openapi.TYPE_INTEGER, description='Рейтинг товара (по умолчанию 5)'),
-                },
-            )
-        )
-    )
-    def post(self, request):
-        serializer = ProductSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
 class ProductListAPIView(APIView):
     @swagger_auto_schema(
-        operation_description="Post запрос для добавления списка товаров",
+        operation_description="Добавление списка товаров",
         request_body=openapi.Schema(
             type=openapi.TYPE_ARRAY,
             items=openapi.Schema(
@@ -358,7 +311,7 @@ class ProductListAPIView(APIView):
                     'category_id': openapi.Schema(type=openapi.TYPE_INTEGER,
                                                   description='id категории к которой относится '
                                                               'товар (обязательное поле)'),
-                    'price': openapi.Schema(type=openapi.TYPE_INTEGER, description='Цена товара (обязательное)'),
+                    'price': openapi.Schema(type=openapi.TYPE_INTEGER, description='Цена товара'),
                     'count': openapi.Schema(type=openapi.TYPE_INTEGER,
                                             description='Количество товара (по умолчанию 0)'),
                     'rating': openapi.Schema(type=openapi.TYPE_INTEGER, description='Рейтинг товара (по умолчанию 5)'),
@@ -387,11 +340,8 @@ class CategoryAPIView(APIView):
             openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id категории'),
             openapi.Parameter('name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
                               description='Название категории'),
-            openapi.Parameter('parent', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
-                              description='Предок категории'),
-            openapi.Parameter('child', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
-                              description='Потомоки категории'),
-
+            openapi.Parameter('parent_id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='id родительской категории'),
         ]
     )
     def get(self, request):
@@ -406,27 +356,23 @@ class CategoryAPIView(APIView):
             properties={
                 'name': openapi.Schema(type=openapi.TYPE_STRING,
                                        description='Название категории (обязательное поле)'),
-                'parent': openapi.Schema(type=openapi.TYPE_STRING,
-                                         description='Предок категории (по умолчанию пустая строка)'),
-                'child': openapi.Schema(type=openapi.TYPE_STRING,
-                                        description='Потомоки категории (по умолчанию пусткая строка)'),
+                'parent_id': openapi.Schema(type=openapi.TYPE_INTEGER,
+                                            description='id родительской категории (необязательное поле)'),
             },
         )
     )
     def post(self, request):
         serializer = CategorySerializer(data=request.data)
         if serializer.is_valid():
-            new_category = serializer.save()
-
-            parent_name = request.data.get('parent')
-            if parent_name:
+            parent_id = request.data.get('parent_id')
+            parent_category = None
+            if parent_id:
                 try:
-                    parent_category = Category.objects.get(name=parent_name)
-                    parent_category.child = f"{parent_category.child}, {new_category.name}" if parent_category.child else new_category.name
-                    parent_category.save()
+                    parent_category = Category.objects.get(pk=parent_id)
                 except Category.DoesNotExist:
-                    return Response({'error': 'Parent category not found'}, status=status.HTTP_404_NOT_FOUND)
+                    return Response({'error': 'Родительская категория не найдена'}, status=status.HTTP_404_NOT_FOUND)
 
+            new_category = serializer.save(parent=parent_category)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -438,13 +384,12 @@ class CategoryAPIViewDetail(APIView):
     @swagger_auto_schema(
         operation_description="Получение категории по id",
         manual_parameters=[
-            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id категории'),
+            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='id категории'),
             openapi.Parameter('name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
                               description='Название категории'),
             openapi.Parameter('parent', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
-                              description='Предок категории'),
-            openapi.Parameter('child', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
-                              description='Потомоки категории'),
+                              description='id родительской категории'),
 
         ]
     )
@@ -455,51 +400,44 @@ class CategoryAPIViewDetail(APIView):
             serializer = CategorySerializer(category)
             return Response(serializer.data)
         except Category.DoesNotExist:
-            return Response({'error': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Категория не найдена'}, status=status.HTTP_404_NOT_FOUND)
 
     @swagger_auto_schema(
         operation_description="Изменение категории по id",
+        manual_parameters=[
+            openapi.Parameter('id', in_=openapi.IN_PATH, type=openapi.TYPE_INTEGER, description='id заказа'),
+        ],
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
                 'name': openapi.Schema(type=openapi.TYPE_STRING,
                                        description='Название категории(можно изменить'),
-                'parent': openapi.Schema(type=openapi.TYPE_STRING,
-                                         description='Предок категории (можно изменить)'),
-                'child': openapi.Schema(type=openapi.TYPE_STRING,
-                                        description='Потомоки категории (лучше не менять)'),
+                'parent_id': openapi.Schema(type=openapi.TYPE_INTEGER,
+                                            description='id родительской категории'),
             },
         )
     )
     def put(self, request, pk):
-
         try:
             category = Category.objects.get(pk=pk)
         except Category.DoesNotExist:
-            return Response({'error': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Категория не найдена'}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = CategorySerializer(category, data=request.data, partial=True)
         if serializer.is_valid():
-            previous_parent_name = category.parent
-
             serializer.save()
 
-            if previous_parent_name:
+            new_parent_id = request.data.get('parent_id')
+            if new_parent_id is not None:
                 try:
-                    parent_category = Category.objects.get(name=previous_parent_name)
-                    parent_category.child = parent_category.child.replace(f", {category.name}", "")
-                    parent_category.child = parent_category.child.strip(", ")
-                    parent_category.save()
+                    new_parent_category = Category.objects.get(pk=new_parent_id)
+                    category.parent = new_parent_category
+                    category.save()
                 except Category.DoesNotExist:
-                    pass
-            new_parent_name = request.data.get('parent')
-            if new_parent_name:
-                try:
-                    new_parent_category = Category.objects.get(name=new_parent_name)
-                    new_parent_category.child = f"{new_parent_category.child}, {category.name}" if new_parent_category.child else category.name
-                    new_parent_category.save()
-                except Category.DoesNotExist:
-                    return Response({'error': 'Parent category not found'}, status=status.HTTP_404_NOT_FOUND)
+                    return Response({'error': 'id родительской категории не найдено'}, status=status.HTTP_404_NOT_FOUND)
+            else:
+                category.parent = None
+                category.save()
 
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -507,47 +445,38 @@ class CategoryAPIViewDetail(APIView):
     @swagger_auto_schema(
         operation_description="Удаление категории по id",
         manual_parameters=[
-            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id категории'),
+            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='id категории'),
         ]
     )
     def delete(self, request, pk):
-
         try:
             category = Category.objects.get(pk=pk)
         except Category.DoesNotExist:
-            return Response({'error': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Категория не найдена'}, status=status.HTTP_404_NOT_FOUND)
 
-        def delete_descendants(category):
-            for child_name in category.child:
-                try:
-                    child_category = Category.objects.get(name=child_name)
-                    delete_descendants(child_category)
-                    child_category.delete()
-                except Category.DoesNotExist:
-                    pass
-
-        delete_descendants(category)
         category.delete()
-
         return Response("success", status=status.HTTP_204_NO_CONTENT)
 
 
 class BannerAPIView(APIView):
     """Получение/создание баннеров"""
-    permission_classes = [IsAuthenticated]
+
+    # permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         operation_description="Получение всех баннеров",
         manual_parameters=[
-            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id баннера'),
-            openapi.Parameter('product_id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
-                              description='id товара'),
-            openapi.Parameter('image', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
-                              description='Изображение баннера'),
+            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='id баннера'),
             openapi.Parameter('header', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
                               description='Заголовок баннера'),
             openapi.Parameter('description', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
                               description='Описание баннера'),
+            openapi.Parameter('products', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='Список id товаров'),
+            openapi.Parameter('image', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
+                              description='Изображение баннера'),
 
         ]
     )
@@ -561,11 +490,14 @@ class BannerAPIView(APIView):
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
-                'product_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='id продукта'),
+                'header': openapi.Schema(type=openapi.TYPE_STRING,
+                                         description='Заголовок баннера (обязательное поле)'),
+                'description': openapi.Schema(type=openapi.TYPE_STRING,
+                                              description='Описание баннера (по умолчанию пустое поле)'),
+                'products': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Schema(type=openapi.TYPE_INTEGER,
+                                                                                         description='Список id товаров')),
                 'image': openapi.Schema(type=openapi.TYPE_STRING,
-                                        description='Изображение баннера (по умолчанию Null) '),
-                'header': openapi.Schema(type=openapi.TYPE_STRING, description='Заголовок баннера'),
-                'description': openapi.Schema(type=openapi.TYPE_STRING, description='Описание баннера'),
+                                        description='Изображение баннера (по умолчанию null) ')
             },
         )
     )
@@ -573,6 +505,11 @@ class BannerAPIView(APIView):
         serializer = BannerSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            products_ids = request.data.get('products')
+            if products_ids:
+                products = Product.objects.filter(pk__in=products_ids)
+                serializer.instance.products.set(products)
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -585,15 +522,14 @@ class BannerAPIViewDetail(APIView):
         operation_description="Получение баннера по id",
         manual_parameters=[
             openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id баннера'),
-            openapi.Parameter('product_id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
-                              description='id товара'),
-            openapi.Parameter('image', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
-                              description='Изображение баннера'),
             openapi.Parameter('header', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
                               description='Заголовок баннера'),
             openapi.Parameter('description', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
                               description='Описание баннера'),
-
+            openapi.Parameter('products', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='Список id товаров'),
+            openapi.Parameter('image', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
+                              description='Изображение баннера'),
         ]
     )
     def get(self, request, pk):
@@ -602,17 +538,20 @@ class BannerAPIViewDetail(APIView):
             serializer = BannerSerializer(banner)
             return Response(serializer.data)
         except Banner.DoesNotExist:
-            return Response({'error': 'Banner not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Баннер не найден'}, status=status.HTTP_404_NOT_FOUND)
 
     @swagger_auto_schema(
         operation_description="Изменение баннера по id",
+        manual_parameters=[
+            openapi.Parameter('id', in_=openapi.IN_PATH, type=openapi.TYPE_INTEGER, description='id заказа'),
+        ],
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
-                'product_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='id товара'),
-                'image': openapi.Schema(type=openapi.TYPE_STRING, description='Изображение баннера'),
                 'header': openapi.Schema(type=openapi.TYPE_STRING, description='Заголовок баннера'),
                 'description': openapi.Schema(type=openapi.TYPE_STRING, description='Описание баннера'),
+                'products': openapi.Schema(type=openapi.TYPE_INTEGER, description='Список id товаров'),
+                'image': openapi.Schema(type=openapi.TYPE_STRING, description='Изображение баннера'),
             },
         )
     )
@@ -621,7 +560,7 @@ class BannerAPIViewDetail(APIView):
         try:
             banner = Banner.objects.get(pk=pk)
         except Banner.DoesNotExist:
-            return Response({'error': 'Banner not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Баннер не найден'}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = BannerSerializer(banner, data=request.data, partial=True)
         if serializer.is_valid():
@@ -631,6 +570,9 @@ class BannerAPIViewDetail(APIView):
 
     @swagger_auto_schema(
         operation_description="Удаление баннера по id",
+        manual_parameters=[
+            openapi.Parameter('id', in_=openapi.IN_PATH, type=openapi.TYPE_INTEGER, description='id заказа'),
+        ],
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
@@ -642,10 +584,139 @@ class BannerAPIViewDetail(APIView):
         try:
             banner = Banner.objects.get(pk=pk)
         except Banner.DoesNotExist:
-            return Response({'error': 'Баннер не найден.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Баннер не найден'}, status=status.HTTP_404_NOT_FOUND)
 
         banner.delete()
         return Response("success", status=status.HTTP_204_NO_CONTENT)
+
+
+class OrderAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="Получение всех заказов",
+        manual_parameters=[
+            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='id заказа'),
+            openapi.Parameter('user', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='id пользователя'),
+            openapi.Parameter('status', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
+                              description='Статус заказа'),
+            openapi.Parameter('price', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='Общая стоимость заказа'),
+        ]
+    )
+    def get(self, request):
+        orders = Order.objects.all()
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data)
+
+    @swagger_auto_schema(
+        operation_description="Создание нового заказа",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'user': openapi.Schema(type=openapi.TYPE_INTEGER,
+                                       description='id пользователя (обязательное поле)'),
+                'status': openapi.Schema(type=openapi.TYPE_STRING,
+                                         description='Статус заказа (по умолчанию "formed")'),
+                'price': openapi.Schema(type=openapi.TYPE_INTEGER,
+                                        description='Общая стоимость заказа (обязательное поле)'),
+            },
+        )
+    )
+    def post(self, request):
+        serializer = OrderSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class OrderAPIViewDetail(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="Получение заказа по id",
+        manual_parameters=[
+            openapi.Parameter('id', in_=openapi.IN_PATH, type=openapi.TYPE_INTEGER,
+                              description='id заказа'),
+            openapi.Parameter('user', in_=openapi.IN_PATH, type=openapi.TYPE_INTEGER,
+                              description='id пользователя'),
+            openapi.Parameter('price', in_=openapi.IN_PATH, type=openapi.TYPE_INTEGER,
+                              description='Общая цена заказа'),
+            openapi.Parameter('status', in_=openapi.IN_PATH, type=openapi.TYPE_INTEGER,
+                              description='Статус заказа'),
+        ]
+    )
+    def get(self, request, pk):
+        try:
+            order = Order.objects.get(pk=pk)
+        except Order.DoesNotExist:
+            return Response({'error': 'Заказ не найден'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = OrderSerializer(order)
+        return Response(serializer.data)
+
+    @swagger_auto_schema(
+        operation_description="Изменение заказа по id",
+        manual_parameters=[
+            openapi.Parameter('id', in_=openapi.IN_PATH, type=openapi.TYPE_INTEGER, description='id заказа'),
+        ],
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'user_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='id пользователя'),
+                'status': openapi.Schema(type=openapi.TYPE_STRING, description='Статус заказа'),
+                'price': openapi.Schema(type=openapi.TYPE_INTEGER, description='Общая стоимость заказа'),
+            },
+        )
+    )
+    def put(self, request, pk):
+        try:
+            order = Order.objects.get(pk=pk)
+        except Order.DoesNotExist:
+            return Response({'error': 'Заказ не найден'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = OrderSerializer(order, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(
+        operation_description="Удаление заказа по id",
+        manual_parameters=[
+            openapi.Parameter('id', in_=openapi.IN_PATH, type=openapi.TYPE_INTEGER, description='id заказа'),
+        ]
+    )
+    def delete(self, request, pk):
+        try:
+            order = Order.objects.get(pk=pk)
+        except Order.DoesNotExist:
+            return Response({'error': 'Заказ не найден'}, status=status.HTTP_404_NOT_FOUND)
+
+        order.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class OrdersUserAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="Получение всех заказов пользователя",
+        manual_parameters=[
+            openapi.Parameter('user', in_=openapi.IN_PATH, type=openapi.TYPE_INTEGER, description='id пользователя'),
+        ]
+    )
+    def get(self, request, fk):
+        try:
+            orders = Order.objects.filter(user=fk)
+        except Order.DoesNotExist:
+            return Response({'error': 'Заказы пользователя не найдены'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data)
 
 
 class OrderViewSet(viewsets.ModelViewSet):
