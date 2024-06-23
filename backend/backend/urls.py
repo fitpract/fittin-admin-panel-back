@@ -14,15 +14,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import path
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from app.views import RegistrationAPIView, LoginAPIView, ProductAPIViewDetail, CategoryAPIView, UsersAPIView, \
     LogoutAPIView, \
     CategoryAPIViewDetail, UserAPIView, BannerAPIView, \
-    ProductAPIView, BannerAPIViewDetail, ProductListAPIView
+    ProductAPIView, BannerAPIViewDetail, ProductListAPIView, OrderAPIView, OrderAPIViewDetail, OrdersUserAPIView
 from app.ResetPassword import ResetPassword
 
 from .yasg import urlpatterns as doc_urls
@@ -40,6 +38,9 @@ urlpatterns = [
     path('category/<int:pk>/', CategoryAPIViewDetail.as_view()),
     path('banner/', BannerAPIView.as_view()),
     path('banner/<int:pk>/', BannerAPIViewDetail.as_view()),
+    path('order/', OrderAPIView.as_view()),
+    path('order/<int:pk>/', OrderAPIViewDetail.as_view()),
+    path('ordersUser/<int:fk>/', OrdersUserAPIView.as_view()),
     path('resetPassword/<str:email>/', ResetPassword.as_view())
 ]
 urlpatterns += staticfiles_urlpatterns()
