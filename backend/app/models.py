@@ -26,8 +26,9 @@ class User(AbstractUser):
 class Category(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField('name', max_length=255, unique=True)
-
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
+    sorder_order = models.IntegerField('sorder_order', default=1)
+    image = models.ImageField(upload_to='category_image/', blank=True)
 
     class Meta:
         db_table = 'category'
@@ -36,11 +37,14 @@ class Category(models.Model):
 class Product(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField('name', max_length=255, blank=False, unique=True)
+    brand = models.CharField('brand', max_length=255, blank=False)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     price = models.IntegerField('price', default=1)
+    description = models.CharField('description', default='')
     count = models.IntegerField('count', default=0)
-    rating = models.IntegerField('rating', default=5)
-    images = models.ImageField(upload_to='media/product_image/% Y/% m/% d/', default=None)
+    rating = models.FloatField('rating', default=5)
+    sorder_order = models.IntegerField('sorder_order', default=1)
+    image = models.ImageField(upload_to='product_image/', blank=True)
 
     class Meta:
         db_table = 'product'
@@ -91,7 +95,7 @@ class Banner(models.Model):
     header = models.CharField(max_length=100, blank=False)
     description = models.CharField(max_length=100, default='')
     products = models.ManyToManyField(Product, related_name='banners', blank=True)
-    image = models.ImageField(upload_to='media', default=None)
+    image = models.ImageField(upload_to='banner_image/', default=None)
 
     class Meta:
         db_table = 'banner'
