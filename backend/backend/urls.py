@@ -41,7 +41,9 @@ urlpatterns = [
     path('order/', OrderAPIView.as_view()),
     path('order/<int:pk>/', OrderAPIViewDetail.as_view()),
     path('ordersUser/<int:fk>/', OrdersUserAPIView.as_view()),
+    path('codeVerification/<str:email>/', CodeVerification.as_view()),
     path('resetPassword/<str:email>/', ResetPassword.as_view())
 ]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += doc_urls
