@@ -16,12 +16,14 @@ Including another URLconf
 """
 from django.urls import path
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.conf.urls.static import static
+from django.conf import settings
 
 from app.views import RegistrationAPIView, LoginAPIView, ProductAPIViewDetail, CategoryAPIView, UsersAPIView, \
     LogoutAPIView, \
     CategoryAPIViewDetail, UserAPIView, BannerAPIView, \
     ProductAPIView, BannerAPIViewDetail, ProductListAPIView, OrderAPIView, OrderAPIViewDetail, OrdersUserAPIView
-from app.ResetPassword import ResetPassword
+from app.ResetPassword import ResetPassword, CodeVerification
 
 from .yasg import urlpatterns as doc_urls
 
