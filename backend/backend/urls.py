@@ -19,12 +19,11 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
 from django.conf import settings
 
-from app.views import RegistrationAPIView, LoginAPIView, ProductAPIViewDetail, CategoryAPIView, UsersAPIView, \
-    LogoutAPIView, \
-    CategoryAPIViewDetail, UserAPIView, BannerAPIView, \
-    ProductAPIView, BannerAPIViewDetail, ProductListAPIView, OrderAPIView, OrderAPIViewDetail, OrdersUserAPIView
-from app.ResetPassword import ResetPassword, CodeVerification
-
+from authorization.views import RegistrationAPIView, LoginAPIView, LogoutAPIView, ResetPassword, CodeVerification
+from catalog.views import ProductAPIView, ProductListAPIView, ProductAPIViewDetail, CategoryAPIView, CategoryAPIViewDetail
+from showcase.views import BannerAPIView, BannerAPIViewDetail
+from user.views import UsersAPIView, UserAPIView
+from order.views import  OrderAPIView, OrderAPIViewDetail, OrdersUserAPIView
 from .yasg import urlpatterns as doc_urls
 
 urlpatterns = [
