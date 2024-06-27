@@ -5,8 +5,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
-from app.models import User
-from app.serializers import UserSerializer
+from user.models import User
+from user.serializers import UserSerializer
 
 class UserAPIView(APIView):
     """Получение авторизованного пользователя"""

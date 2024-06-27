@@ -1,7 +1,7 @@
-from django.test import TestCase
-from ..serializers import UserSerializer
-from django.core.files.uploadedfile import SimpleUploadedFile
-import json
+# from django.test import TestCase
+# from ..serializers import UserSerializer
+# from django.core.files.uploadedfile import SimpleUploadedFile
+# import json
 
 
 

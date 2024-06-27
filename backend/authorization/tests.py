@@ -1,5 +1,5 @@
 from django.test import TestCase
-from app.serializers import UserSerializer
+from user.serializers import UserSerializer
 import json
 
 class RegistrationTest(TestCase):

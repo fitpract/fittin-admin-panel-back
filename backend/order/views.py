@@ -6,8 +6,8 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 
-from app.models import Order, OrderedProduct
-from app.serializers import OrderSerializer, OrderedProductSerializer
+from order.models import Order, OrderedProduct
+from order.serializers import OrderSerializer, OrderedProductSerializer
 
 class OrderAPIView(APIView):
     permission_classes = [IsAuthenticated]

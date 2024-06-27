@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app',
     'authorization',
     'catalog',
     'showcase',
@@ -209,7 +208,7 @@ MEDIA_ROOT = '/vol/media/'
 
 MEDIA_URL = 'media/'
 
-AUTH_USER_MODEL = 'app.User'
+AUTH_USER_MODEL = 'user.User'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

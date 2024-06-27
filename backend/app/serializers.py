@@ -1,54 +1,54 @@
-from rest_framework import serializers
+# from rest_framework import serializers
 
-from .models import Category, Product, Order, OrderedProduct, User, Banner
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'email', 'name', 'surname', 'password', 'is_staff']
-        extra_kwargs = {
-            'password': {'write_only': True},
-            'code': {'read_only': True},
-        }
-
-    def create(self, validated_data):
-        password = validated_data.pop('password', None)
-        instance = self.Meta.model(**validated_data)
-        if password is not None:
-            instance.set_password(password)
-        instance.save()
-        return instance
+# from .models import Category, Product, Order, OrderedProduct, User, Banner
 
 
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = '__all__'
+# class UserSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ['id', 'email', 'name', 'surname', 'password', 'is_staff']
+#         extra_kwargs = {
+#             'password': {'write_only': True},
+#             'code': {'read_only': True},
+#         }
+
+#     def create(self, validated_data):
+#         password = validated_data.pop('password', None)
+#         instance = self.Meta.model(**validated_data)
+#         if password is not None:
+#             instance.set_password(password)
+#         instance.save()
+#         return instance
 
 
-class BannerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Banner
-        fields = '__all__'
+# class CategorySerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Category
+#         fields = '__all__'
 
 
-class ProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-
-        fields = '__all__'
-
-
-class OrderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Order
-
-        fields = '__all__'
+# class BannerSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Banner
+#         fields = '__all__'
 
 
-class OrderedProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OrderedProduct
+# class ProductSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Product
 
-        fields = '__all__'
+#         fields = '__all__'
+
+
+# class OrderSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Order
+
+#         fields = '__all__'
+
+
+# class OrderedProductSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = OrderedProduct
+
+#         fields = '__all__'

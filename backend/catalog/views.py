@@ -5,8 +5,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
-from app.models import Product, Category
-from app.serializers import ProductSerializer, CategorySerializer
+from catalog.models import Product, Category
+from catalog.serializers import ProductSerializer, CategorySerializer
 
 class ProductAPIView(APIView):
     """Получение/создание товаров"""

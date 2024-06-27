@@ -5,8 +5,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
-from app.models import Banner, Product
-from app.serializers import BannerSerializer
+from showcase.models import Banner, Product
+from showcase.serializers import BannerSerializer
 
 class BannerAPIView(APIView):
     """Получение/создание баннеров"""

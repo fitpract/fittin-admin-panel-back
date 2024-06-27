@@ -11,8 +11,8 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 
 
-from app.models import User
-from app.serializers import UserSerializer
+from user.models import User
+from user.serializers import UserSerializer
 
 
 class RegistrationAPIView(APIView):
