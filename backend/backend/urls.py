@@ -22,9 +22,13 @@ from django.conf import settings
 from authorization.views import RegistrationAPIView, LoginAPIView, LogoutAPIView, ResetPassword, CodeVerification
 from catalog.views import ProductAPIView, ProductListAPIView, ProductAPIViewDetail, CategoryAPIView, CategoryAPIViewDetail
 from showcase.views import BannerAPIView, BannerAPIViewDetail
+from storage.views import StorageAPIView, StorageAPIViewDetail, ProductStorageAPIView, ProductStorageAPIViewDetail
+from storage.views import ProductStorageAPIViewByStorage
+
 from user.views import UsersAPIView, UserAPIView
-from order.views import  OrderAPIView, OrderAPIViewDetail, OrdersUserAPIView
+from order.views import OrderAPIView, OrderAPIViewDetail, OrdersUserAPIView
 from .yasg import urlpatterns as doc_urls
+
 
 urlpatterns = [
     path('registration/', RegistrationAPIView.as_view()),
@@ -42,8 +46,13 @@ urlpatterns = [
     path('order/', OrderAPIView.as_view()),
     path('order/<int:pk>/', OrderAPIViewDetail.as_view()),
     path('ordersUser/<int:fk>/', OrdersUserAPIView.as_view()),
+    path('storage/', StorageAPIView.as_view()),
+    path('storage/<int:pk>', StorageAPIViewDetail.as_view()),
+    path('productStorage/', ProductStorageAPIView.as_view()),
+    path('productStorage/<int:pk>/', ProductStorageAPIViewDetail.as_view()),
+    path('productStorageByStorage/<int:fk>/', ProductStorageAPIViewByStorage.as_view()),
     path('codeVerification/<str:email>/', CodeVerification.as_view()),
-    path('resetPassword/<str:email>/', ResetPassword.as_view())
+    path('resetPassword/<str:email>/', ResetPassword.as_view()),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += staticfiles_urlpatterns()

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'authorization',
     'catalog',
     'showcase',
+    'storage',
     'user',
     'order',
     'rest_framework',
