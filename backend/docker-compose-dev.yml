@@ -8,12 +8,18 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
-    ports:
-      - "5432:5432"
+    expose:
+      - 5432
   backend:
     container_name: back
-    command: sh -c "gunicorn --bind 0.0.0.0:8000 backend.wsgi"
+    command: sh -c "python3 manage.py collectstatic --noinput &&
+              python3 manage.py makemigrations &&
+              python3 manage.py migrate &&
+              gunicorn --bind 0.0.0.0:8000 backend.wsgi"
     build: .
+    volumes:
+      - static-data:/vol/static
+      - media-data:/vol/media
     ports:
       - "8000:8000"
     depends_on:
@@ -21,3 +27,5 @@ services:
       
 volumes:
   pgdbdata:
+  static-data:
+  media-data:

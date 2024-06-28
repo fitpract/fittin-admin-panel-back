@@ -12,8 +12,10 @@ services:
       - 5432
   backend:
     container_name: back
-    command:  sh -c "gunicorn --bind 0.0.0.0:8000 backend.wsgi && 
-              python3 manage.py collectstatic --noinput"
+    command:  sh -c "python3 manage.py collectstatic --noinput &&
+              python3 manage.py makemigrations &&
+              python3 manage.py migrate &&
+              gunicorn --bind 0.0.0.0:8000 backend.wsgi"
     build: .
     expose:
       - 8000
