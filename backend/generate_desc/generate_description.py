@@ -3,7 +3,7 @@ import re
 from g4f.client import Client
 from g4f.Provider import Blackbox
 from g4f.providers.retry_provider import RetryProvider
-
+from g4f import debug
 client = Client(
     provider=RetryProvider([Blackbox],
                             single_provider_retry= True)
@@ -11,6 +11,8 @@ client = Client(
 
 
 def generate_product_description(product_name):
+    debug.logging = True 
+    debug.version_check = False 
     """
     Генерирует описание продукта с использованием модели g4f.
 
