@@ -1,11 +1,12 @@
 import re
 
 from g4f.client import Client
-from g4f.Provider import Phind, Blackbox
+from g4f.Provider import Blackbox
 from g4f.providers.retry_provider import RetryProvider
 
 client = Client(
-    provider=RetryProvider([Phind, Blackbox], shuffle=False)
+    provider=RetryProvider([Blackbox],
+                            single_provider_retry= True)
 )
 
 

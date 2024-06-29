@@ -12,6 +12,7 @@ schema_view = get_schema_view(
         description="Базовые запросы для админ панели",
         license=openapi.License(name="BSD License"),
     ),
+    url='https://fittinadminpanel.ru',
     public=True,
     permission_classes=(permissions.AllowAny,),
 )
