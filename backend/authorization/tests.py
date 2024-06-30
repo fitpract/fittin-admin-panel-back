@@ -13,6 +13,7 @@ class RegistrationTest(TestCase):
                                     json.dumps(json_body),
                                     content_type="application/json")
         self.assertEqual(response.status_code,200)
+        print('registration post done')
 
 
 class LoginTest(TestCase):
@@ -26,7 +27,7 @@ class LoginTest(TestCase):
         serializer.is_valid(raise_exception=True)
         serializer.save()
     
-    def test_status_code(self):
+    def test_login(self):
         json_body = {
             'email':'user@mail.ru',
             'password':'pass'
@@ -35,6 +36,7 @@ class LoginTest(TestCase):
                                     json.dumps(json_body),
                                     content_type="application/json")
         self.assertEqual(response.status_code,200)
+        print('login post done')
 
 
 class LogoutTest(TestCase):
@@ -62,3 +64,4 @@ class LogoutTest(TestCase):
         response = self.client.post('/logout/')
         self.assertEqual(response.status_code,200)
         self.assertEqual(response.cookies.get('jwt').value,'')
+        print('logout post done')
