@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from showcase.models import Banner, Product
 from showcase.serializers import BannerSerializer
 
+
 class BannerAPIView(APIView):
     """Получение/создание баннеров"""
 
@@ -24,6 +25,8 @@ class BannerAPIView(APIView):
                               description='Описание баннера'),
             openapi.Parameter('products', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
                               description='Список id товаров'),
+            openapi.Parameter('is_show', in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN,
+                              description='Булево значение для баннера, показывать его или нет'),
             openapi.Parameter('image', in_=openapi.IN_QUERY, type=openapi.TYPE_FILE,
                               description='Изображение баннера'),
 
@@ -46,6 +49,8 @@ class BannerAPIView(APIView):
                 'products': openapi.Schema(type=openapi.TYPE_ARRAY,
                                            items=openapi.Schema(type=openapi.TYPE_INTEGER,
                                                                 description='Список id товаров')),
+                'is_show': openapi.Schema(type=openapi.TYPE_BOOLEAN,
+                                          description='Булево значение для баннера, показывать его или нет'),
                 'image': openapi.Schema(type=openapi.TYPE_FILE,
                                         description='Изображение баннера (по умолчанию null) ')
             },
@@ -81,6 +86,8 @@ class BannerAPIViewDetail(APIView):
                               description='Описание баннера'),
             openapi.Parameter('products', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
                               description='Список id товаров'),
+            openapi.Parameter('is_show', in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN,
+                              description='Булево значение для баннера, показывать его или нет'),
             openapi.Parameter('image', in_=openapi.IN_QUERY, type=openapi.TYPE_FILE,
                               description='Изображение баннера'),
         ]
@@ -110,6 +117,8 @@ class BannerAPIViewDetail(APIView):
                 'products': openapi.Schema(type=openapi.TYPE_ARRAY,
                                            items=openapi.Schema(type=openapi.TYPE_INTEGER,
                                                                 description='Список id товаров')),
+                'is_show': openapi.Schema(type=openapi.TYPE_BOOLEAN,
+                                          description='Булево значение для баннера, показывать его или нет'),
                 'image': openapi.Schema(type=openapi.TYPE_FILE,
                                         description='Изображение баннера'),
             },
