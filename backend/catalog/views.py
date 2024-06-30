@@ -382,3 +382,32 @@ class CategoryAPIViewDetail(APIView):
 
         category.delete()
         return Response("success", status=status.HTTP_204_NO_CONTENT)
+
+
+class CategoryAPIViewByParent(APIView):
+    """Получение количества под категорий"""
+
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="Получение категории по id",
+        manual_parameters=[
+            openapi.Parameter('id', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='id категории'),
+            openapi.Parameter('name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
+                              description='Название категории'),
+            openapi.Parameter('parent_id', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING,
+                              description='id родительской категории'),
+            openapi.Parameter('sorder_order', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='Позиция категории в списке'),
+
+        ]
+    )
+    def get(self, request, pk):
+        try:
+            parent_category = Category.objects.get(pk=pk)
+            child_categories = Category.objects.filter(parent=parent_category)
+            return Response({'count': child_categories.count()})
+
+        except Category.DoesNotExist:
+            return Response({'error': 'The category with the specified ID was not found'}, status=404)

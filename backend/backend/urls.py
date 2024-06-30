@@ -20,7 +20,9 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 from authorization.views import RegistrationAPIView, LoginAPIView, LogoutAPIView, ResetPassword, CodeVerification
-from catalog.views import ProductAPIView, ProductListAPIView, ProductAPIViewDetail, CategoryAPIView, CategoryAPIViewDetail
+from catalog.views import ProductAPIView, ProductListAPIView, ProductAPIViewDetail, CategoryAPIView
+from catalog.views import  CategoryAPIViewDetail, CategoryAPIViewByParent
+
 from showcase.views import BannerAPIView, BannerAPIViewDetail
 from storage.views import StorageAPIView, StorageAPIViewDetail, ProductStorageAPIView, ProductStorageAPIViewDetail
 from storage.views import ProductStorageAPIViewByStorage
@@ -41,6 +43,7 @@ urlpatterns = [
     path('product/<int:pk>/', ProductAPIViewDetail.as_view()),
     path('category/', CategoryAPIView.as_view()),
     path('category/<int:pk>/', CategoryAPIViewDetail.as_view()),
+    path('categoryByParent/<int:pk>/', CategoryAPIViewByParent.as_view()),
     path('banner/', BannerAPIView.as_view()),
     path('banner/<int:pk>/', BannerAPIViewDetail.as_view()),
     path('order/', OrderAPIView.as_view()),
