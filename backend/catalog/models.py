@@ -15,8 +15,8 @@ class Category(models.Model):
 class Product(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField('name', max_length=255, blank=False, unique=True)
-    brand = models.CharField('brand', max_length=255, blank=False,default='')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    brand = models.CharField('brand', max_length=255, default='')
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     price = models.IntegerField('price', default=1)
     description = models.CharField('description', default='')
     count = models.IntegerField('count', default=0)

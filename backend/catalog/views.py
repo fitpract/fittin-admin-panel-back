@@ -7,9 +7,13 @@ from rest_framework.permissions import IsAuthenticated
 
 from catalog.models import Product, Category
 from catalog.serializers import ProductSerializer, CategorySerializer
+from generate_desc import generate_description
+
 
 class ProductAPIView(APIView):
     """Получение/создание товаров"""
+
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         operation_description="Получение всех товаров",
@@ -49,12 +53,14 @@ class ProductAPIView(APIView):
             properties={
                 'name': openapi.Schema(type=openapi.TYPE_STRING,
                                        description='Название товара (обязательное поле)'),
+                'description': openapi.Schema(type=openapi.TYPE_STRING,
+                                              description='Описание товара (необязательное поле)'),
                 'brand': openapi.Schema(type=openapi.TYPE_STRING,
-                                        description='Название бренда товара (обязательное поле)'),
+                                        description='Название бренда товара (необязательное поле)'),
                 'category': openapi.Schema(type=openapi.TYPE_INTEGER,
-                                           description='id категории к которой относится товар (обязательное поле)'),
+                                           description='id категории к которой относится товар (необязательное поле)'),
                 'price': openapi.Schema(type=openapi.TYPE_INTEGER,
-                                        description='Цена товара (обязательное поле)'),
+                                        description='Цена товара (по умолчанию 1)'),
                 'count': openapi.Schema(type=openapi.TYPE_INTEGER,
                                         description='Количество товара (по умолчанию 0)'),
                 'rating': openapi.Schema(type=openapi.FORMAT_FLOAT,
@@ -78,6 +84,7 @@ class ProductAPIView(APIView):
 
 class ProductAPIViewDetail(APIView):
     """Получение/изменение товара по id"""
+
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
@@ -126,12 +133,14 @@ class ProductAPIViewDetail(APIView):
             properties={
                 'name': openapi.Schema(type=openapi.TYPE_STRING,
                                        description='Название товара (обязательное поле)'),
+                'description': openapi.Schema(type=openapi.TYPE_STRING,
+                                              description='Описание товара (необязательное поле)'),
                 'brand': openapi.Schema(type=openapi.TYPE_STRING,
-                                        description='Название бренда товара (обязательное поле)'),
+                                        description='Название бренда товара (необязательное поле)'),
                 'category': openapi.Schema(type=openapi.TYPE_INTEGER,
-                                           description='id категории к которой относится товар (обязательное поле)'),
+                                           description='id категории к которой относится товар (необязательное поле)'),
                 'price': openapi.Schema(type=openapi.TYPE_INTEGER,
-                                        description='Цена товара (обязательное поле)'),
+                                        description='Цена товара (по умолчанию 1)'),
                 'count': openapi.Schema(type=openapi.TYPE_INTEGER,
                                         description='Количество товара (по умолчанию 0)'),
                 'rating': openapi.Schema(type=openapi.FORMAT_FLOAT,
@@ -190,12 +199,14 @@ class ProductListAPIView(APIView):
                 properties={
                     'name': openapi.Schema(type=openapi.TYPE_STRING,
                                            description='Название товара (обязательное поле)'),
+                    'description': openapi.Schema(type=openapi.TYPE_STRING,
+                                                  description='Описание товара (необязательное поле)'),
                     'brand': openapi.Schema(type=openapi.TYPE_STRING,
-                                            description='Название бренда товара (обязательное поле)'),
+                                            description='Название бренда товара (необязательное поле)'),
                     'category': openapi.Schema(type=openapi.TYPE_INTEGER,
-                                               description='id категории к которой относится товар (обязательное поле)'),
+                                               description='id категории к которой относится товар (необязательное поле)'),
                     'price': openapi.Schema(type=openapi.TYPE_INTEGER,
-                                            description='Цена товара (обязательное поле)'),
+                                            description='Цена товара (по умолчанию 1)'),
                     'count': openapi.Schema(type=openapi.TYPE_INTEGER,
                                             description='Количество товара (по умолчанию 0)'),
                     'rating': openapi.Schema(type=openapi.FORMAT_FLOAT,
@@ -219,10 +230,11 @@ class ProductListAPIView(APIView):
 
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
+
 
 class CategoryAPIView(APIView):
     """Получение/создание категорий"""
+
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
@@ -282,6 +294,7 @@ class CategoryAPIView(APIView):
 
 class CategoryAPIViewDetail(APIView):
     """Получение/изменение категории по id"""
+
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
