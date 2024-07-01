@@ -14,23 +14,49 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import path
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.conf.urls.static import static
+from django.conf import settings
 
-from app.views import RegistrationAPIView, LoginAPIView, ProductAPIView, CategoryAPIView, UsersAPIView, LogoutAPIView, \
-    CategoryDetailAPIView, UserAPIView
+from authorization.views import RegistrationAPIView, LoginAPIView, LogoutAPIView, ResetPassword, CodeVerification
+from catalog.views import ProductAPIView, ProductListAPIView, ProductAPIViewDetail, CategoryAPIView
+from catalog.views import  CategoryAPIViewDetail, CategoryAPIViewByParent
 
+from showcase.views import BannerAPIView, BannerAPIViewDetail
+from storage.views import StorageAPIView, StorageAPIViewDetail, ProductStorageAPIView, ProductStorageAPIViewDetail
+from storage.views import ProductStorageAPIViewByStorage
+
+from user.views import UsersAPIView, UserAPIView
+from order.views import OrderAPIView, OrderAPIViewDetail, OrdersUserAPIView
 from .yasg import urlpatterns as doc_urls
 
+
 urlpatterns = [
-    path('register/', RegistrationAPIView.as_view()),
+    path('registration/', RegistrationAPIView.as_view()),
     path('user/', UserAPIView.as_view()),
     path('users/', UsersAPIView.as_view()),
     path('login/', LoginAPIView.as_view()),
     path('logout/', LogoutAPIView.as_view()),
     path('product/', ProductAPIView.as_view()),
+    path('productList/', ProductListAPIView.as_view()),
+    path('product/<int:pk>/', ProductAPIViewDetail.as_view()),
     path('category/', CategoryAPIView.as_view()),
-    path('category/delete/<int:pk>/', CategoryDetailAPIView.as_view()),
+    path('category/<int:pk>/', CategoryAPIViewDetail.as_view()),
+    path('categoryByParent/<int:pk>/', CategoryAPIViewByParent.as_view()),
+    path('banner/', BannerAPIView.as_view()),
+    path('banner/<int:pk>/', BannerAPIViewDetail.as_view()),
+    path('order/', OrderAPIView.as_view()),
+    path('order/<int:pk>/', OrderAPIViewDetail.as_view()),
+    path('ordersUser/<int:fk>/', OrdersUserAPIView.as_view()),
+    path('storage/', StorageAPIView.as_view()),
+    path('storage/<int:pk>', StorageAPIViewDetail.as_view()),
+    path('productStorage/', ProductStorageAPIView.as_view()),
+    path('productStorage/<int:pk>/', ProductStorageAPIViewDetail.as_view()),
+    path('productStorageByStorage/<int:fk>/', ProductStorageAPIViewByStorage.as_view()),
+    path('codeVerification/<str:email>/', CodeVerification.as_view()),
+    path('resetPassword/<str:email>/', ResetPassword.as_view()),
 ]
-
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += staticfiles_urlpatterns()
 urlpatterns += doc_urls

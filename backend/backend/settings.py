@@ -33,7 +33,8 @@ SECRET_KEY = env('SECRET_KEY', 'django-insecure-@59&@o*os54$n1_2!g^j7w8m=j2mf@dn
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG', True)
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", ['localhost', '127.0.0.1', '0.0.0.0', 'localhost:54346'])
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", ['fittinadminpanel.ru','89.111.174.97',
+                                           'www.fittinadminpanel.ru','localhost', '127.0.0.1', '0.0.0.0'])
 
 # Application definition
 
@@ -44,7 +45,12 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app',
+    'authorization',
+    'catalog',
+    'showcase',
+    'storage',
+    'user',
+    'order',
     'rest_framework',
     'drf_yasg',
     'django.contrib.postgres',
@@ -73,26 +79,64 @@ REST_FRAMEWORK = {
     ],
 
 }
-CORS_ORIGINAL_ALLOW_ALL = True
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False
+}
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:54346"
-]
+
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_POST = 465
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = 'fittinaddmin@yandex.ru'
+EMAIL_HOST_PASSWORD = 'afusoisdlrpqavqp'
+DEFAULT_FROM_EMAIL = 'fittinaddmin@yandex.ru'
 
 ROOT_URLCONF = 'backend.urls'
 
 SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(hours=6),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
+    "UPDATE_LAST_LOGIN": False,
 
-    'ROTATE_REFRESH_TOKENS': True,
+    "ALGORITHM": "HS256",
 
-    'BLACKLIST_AFTER_ROTATION': True,
+    "SIGNING_KEY": SECRET_KEY,
+    "VERIFYING_KEY": "",
+    "AUDIENCE": None,
+    "ISSUER": None,
+    "JSON_ENCODER": None,
+    "JWK_URL": None,
+    "LEEWAY": 0,
 
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+    "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
 
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=60),
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    "TOKEN_TYPE_CLAIM": "token_type",
+    "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
 
+    "JTI_CLAIM": "jti",
+
+    "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
+    "SLIDING_TOKEN_LIFETIME": timedelta(hours=1),
+    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(hours=6),
+
+    "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
+    "TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
+    "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
+    "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
+    "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
+    "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
-
 
 TEMPLATES = [
     {
@@ -158,9 +202,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = '/static/'
 
-AUTH_USER_MODEL = 'app.User'
+STATIC_ROOT = '/vol/static/'
+STATIC_URL = 'static/'
+
+MEDIA_ROOT = '/vol/media/'
+
+MEDIA_URL = 'media/'
+
+AUTH_USER_MODEL = 'user.User'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

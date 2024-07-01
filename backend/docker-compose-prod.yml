@@ -12,10 +12,16 @@ services:
       - 5432
   backend:
     container_name: back
-    command: sh -c "gunicorn --bind 0.0.0.0:8000 backend.wsgi"
+    command:  sh -c "python3 manage.py collectstatic --noinput &&
+              python3 manage.py makemigrations &&
+              python3 manage.py migrate &&
+              gunicorn --bind 0.0.0.0:8000 backend.wsgi"
     build: .
     expose:
       - 8000
+    volumes:
+      - static-data:/vol/static
+      - media-data:/vol/media
     depends_on:
       - db
   nginx:
@@ -26,7 +32,13 @@ services:
       - backend
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx-conf
+      - ./nginx/etc/ssl:/etc/nginx/ssl
+      - static-data:/vol/static
+      - media-data:/vol/media
 volumes:
   pgdbdata:
+  static-data:
+  media-data:

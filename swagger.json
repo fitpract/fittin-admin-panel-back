@@ -1,0 +1,2139 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Django админ панель",
+    "description": "Базовые запросы для админ панели",
+    "license": {
+      "name": "BSD License"
+    },
+    "version": "v1"
+  },
+  "host": "localhost:8000",
+  "schemes": [
+    "http"
+  ],
+  "basePath": "/",
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "securityDefinitions": {
+    "Basic": {
+      "type": "basic"
+    }
+  },
+  "security": [
+    {
+      "Basic": []
+    }
+  ],
+  "paths": {
+    "/banner/": {
+      "get": {
+        "operationId": "banner_list",
+        "description": "Получение всех баннеров",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id баннера",
+            "type": "integer"
+          },
+          {
+            "name": "header",
+            "in": "query",
+            "description": "Заголовок баннера",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "description": "Описание баннера",
+            "type": "string"
+          },
+          {
+            "name": "products",
+            "in": "query",
+            "description": "Список id товаров",
+            "type": "integer"
+          },
+          {
+            "name": "image",
+            "in": "query",
+            "description": "Изображение баннера",
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "banner"
+        ]
+      },
+      "post": {
+        "operationId": "banner_create",
+        "description": "Создание нового баннера",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "header": {
+                  "description": "Заголовок баннера (обязательное поле)",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "Описание баннера (по умолчанию пустое поле)",
+                  "type": "string"
+                },
+                "products": {
+                  "type": "array",
+                  "items": {
+                    "description": "Список id товаров",
+                    "type": "integer"
+                  }
+                },
+                "image": {
+                  "description": "Изображение баннера (по умолчанию null) ",
+                  "type": "file"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "header": {
+                  "description": "Заголовок баннера (обязательное поле)",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "Описание баннера (по умолчанию пустое поле)",
+                  "type": "string"
+                },
+                "products": {
+                  "type": "array",
+                  "items": {
+                    "description": "Список id товаров",
+                    "type": "integer"
+                  }
+                },
+                "image": {
+                  "description": "Изображение баннера (по умолчанию null) ",
+                  "type": "file"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "banner"
+        ]
+      },
+      "parameters": []
+    },
+    "/banner/{id}/": {
+      "get": {
+        "operationId": "banner_read",
+        "description": "Получение баннера по id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id баннера",
+            "type": "integer"
+          },
+          {
+            "name": "header",
+            "in": "query",
+            "description": "Заголовок баннера",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "description": "Описание баннера",
+            "type": "string"
+          },
+          {
+            "name": "products",
+            "in": "query",
+            "description": "Список id товаров",
+            "type": "integer"
+          },
+          {
+            "name": "image",
+            "in": "query",
+            "description": "Изображение баннера",
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "banner"
+        ]
+      },
+      "put": {
+        "operationId": "banner_update",
+        "description": "Изменение баннера по id",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "header": {
+                  "description": "Заголовок баннера",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "Описание баннера",
+                  "type": "string"
+                },
+                "products": {
+                  "type": "array",
+                  "items": {
+                    "description": "Список id товаров",
+                    "type": "integer"
+                  }
+                },
+                "image": {
+                  "description": "Изображение баннера",
+                  "type": "file"
+                }
+              }
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id заказа",
+            "type": "integer",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "header": {
+                  "description": "Заголовок баннера",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "Описание баннера",
+                  "type": "string"
+                },
+                "products": {
+                  "type": "array",
+                  "items": {
+                    "description": "Список id товаров",
+                    "type": "integer"
+                  }
+                },
+                "image": {
+                  "description": "Изображение баннера",
+                  "type": "file"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "banner"
+        ]
+      },
+      "delete": {
+        "operationId": "banner_delete",
+        "description": "Удаление баннера по id",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "description": "id банера",
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id заказа",
+            "type": "integer",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "banner"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/category/": {
+      "get": {
+        "operationId": "category_list",
+        "description": "Получение всех категорий",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id категории",
+            "type": "integer"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Название категории",
+            "type": "string"
+          },
+          {
+            "name": "parent_id",
+            "in": "query",
+            "description": "id родительской категории",
+            "type": "integer"
+          },
+          {
+            "name": "sorder_order",
+            "in": "query",
+            "description": "Позиция категории в списке",
+            "type": "integer"
+          },
+          {
+            "name": "image",
+            "in": "query",
+            "description": "Изображение категории",
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "category"
+        ]
+      },
+      "post": {
+        "operationId": "category_create",
+        "description": "Добавление новой категории",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Название категории(можно изменить",
+                  "type": "string"
+                },
+                "parent_id": {
+                  "description": "id родительской категории",
+                  "type": "integer"
+                },
+                "sorder_order": {
+                  "description": "Позиция категории в списке",
+                  "type": "integer"
+                },
+                "image": {
+                  "description": "Изображение категории",
+                  "type": "file"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Название категории(можно изменить",
+                  "type": "string"
+                },
+                "parent_id": {
+                  "description": "id родительской категории",
+                  "type": "integer"
+                },
+                "sorder_order": {
+                  "description": "Позиция категории в списке",
+                  "type": "integer"
+                },
+                "image": {
+                  "description": "Изображение категории",
+                  "type": "file"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "category"
+        ]
+      },
+      "parameters": []
+    },
+    "/category/{id}/": {
+      "get": {
+        "operationId": "category_read",
+        "description": "Получение категории по id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id категории",
+            "type": "integer"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Название категории",
+            "type": "string"
+          },
+          {
+            "name": "parent_id",
+            "in": "query",
+            "description": "id родительской категории",
+            "type": "string"
+          },
+          {
+            "name": "sorder_order",
+            "in": "query",
+            "description": "Позиция категории в списке",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "category"
+        ]
+      },
+      "put": {
+        "operationId": "category_update",
+        "description": "Изменение категории по id",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Название категории(можно изменить",
+                  "type": "string"
+                },
+                "parent_id": {
+                  "description": "id родительской категории",
+                  "type": "integer"
+                },
+                "sorder_order": {
+                  "description": "Позиция категории в списке",
+                  "type": "integer"
+                },
+                "image": {
+                  "description": "Изображение категории",
+                  "type": "file"
+                }
+              }
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id заказа",
+            "type": "integer",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Название категории(можно изменить",
+                  "type": "string"
+                },
+                "parent_id": {
+                  "description": "id родительской категории",
+                  "type": "integer"
+                },
+                "sorder_order": {
+                  "description": "Позиция категории в списке",
+                  "type": "integer"
+                },
+                "image": {
+                  "description": "Изображение категории",
+                  "type": "file"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "category"
+        ]
+      },
+      "delete": {
+        "operationId": "category_delete",
+        "description": "Удаление категории по id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id категории",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "category"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/codeVerification/{email}/": {
+      "get": {
+        "operationId": "codeVerification_read",
+        "description": "Отправление кода для изменения пароля на почту, которую вы указываете в url запроса",
+        "parameters": [
+          {
+            "name": "message",
+            "in": "query",
+            "description": "Код для сброса пароля отправлен на вашу почту. Он действителен в течение 30 минут",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "codeVerification"
+        ]
+      },
+      "post": {
+        "operationId": "codeVerification_create",
+        "description": "Проверка кода, который был отправлен на почту",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "Указываете code, который пришёл на почту",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "Указываете code, который пришёл на почту",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "codeVerification"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "email",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/login/": {
+      "post": {
+        "operationId": "login_create",
+        "description": "Авторизация пользователя",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "description": "Email пользователя",
+                  "type": "string"
+                },
+                "password": {
+                  "description": "Пароль пользователя",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "description": "Email пользователя",
+                  "type": "string"
+                },
+                "password": {
+                  "description": "Пароль пользователя",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "login"
+        ]
+      },
+      "parameters": []
+    },
+    "/logout/": {
+      "post": {
+        "operationId": "logout_create",
+        "description": "Выход из аккаунта, нет полей",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "logout"
+        ]
+      },
+      "parameters": []
+    },
+    "/order/": {
+      "get": {
+        "operationId": "order_list",
+        "description": "Получение всех заказов",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id заказа",
+            "type": "integer"
+          },
+          {
+            "name": "user",
+            "in": "query",
+            "description": "id пользователя",
+            "type": "integer"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Статус заказа",
+            "type": "string"
+          },
+          {
+            "name": "price",
+            "in": "query",
+            "description": "Общая стоимость заказа",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "order"
+        ]
+      },
+      "post": {
+        "operationId": "order_create",
+        "description": "Создание нового заказа",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "description": "id пользователя (обязательное поле)",
+                  "type": "integer"
+                },
+                "status": {
+                  "description": "Статус заказа (по умолчанию \"formed\")",
+                  "type": "string"
+                },
+                "price": {
+                  "description": "Общая стоимость заказа (обязательное поле)",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "description": "id пользователя (обязательное поле)",
+                  "type": "integer"
+                },
+                "status": {
+                  "description": "Статус заказа (по умолчанию \"formed\")",
+                  "type": "string"
+                },
+                "price": {
+                  "description": "Общая стоимость заказа (обязательное поле)",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "order"
+        ]
+      },
+      "parameters": []
+    },
+    "/order/{id}/": {
+      "get": {
+        "operationId": "order_read",
+        "description": "Получение заказа по id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id заказа",
+            "type": "integer",
+            "required": true
+          },
+          {
+            "name": "user",
+            "in": "path",
+            "description": "id пользователя",
+            "type": "integer",
+            "required": true
+          },
+          {
+            "name": "price",
+            "in": "path",
+            "description": "Общая цена заказа",
+            "type": "integer",
+            "required": true
+          },
+          {
+            "name": "status",
+            "in": "path",
+            "description": "Статус заказа",
+            "type": "integer",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "order"
+        ]
+      },
+      "put": {
+        "operationId": "order_update",
+        "description": "Изменение заказа по id",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user_id": {
+                  "description": "id пользователя",
+                  "type": "integer"
+                },
+                "status": {
+                  "description": "Статус заказа",
+                  "type": "string"
+                },
+                "price": {
+                  "description": "Общая стоимость заказа",
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id заказа",
+            "type": "integer",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user_id": {
+                  "description": "id пользователя",
+                  "type": "integer"
+                },
+                "status": {
+                  "description": "Статус заказа",
+                  "type": "string"
+                },
+                "price": {
+                  "description": "Общая стоимость заказа",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "order"
+        ]
+      },
+      "delete": {
+        "operationId": "order_delete",
+        "description": "Удаление заказа по id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id заказа",
+            "type": "integer",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "order"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/ordersUser/{fk}/": {
+      "get": {
+        "operationId": "ordersUser_read",
+        "description": "Получение всех заказов пользователя",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "description": "id пользователя",
+            "type": "integer",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ordersUser"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "fk",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/product/": {
+      "get": {
+        "operationId": "product_list",
+        "description": "Получение всех товаров",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id товара",
+            "type": "integer"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Название товара",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "description": "Описание товара",
+            "type": "string"
+          },
+          {
+            "name": "brand",
+            "in": "query",
+            "description": "Название бренда товара",
+            "type": "string"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "id категории к которой относится товар",
+            "type": "integer"
+          },
+          {
+            "name": "price",
+            "in": "query",
+            "description": "Цена товара",
+            "type": "integer"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "description": "Количество товара",
+            "type": "integer"
+          },
+          {
+            "name": "rating",
+            "in": "query",
+            "description": "Рейтинг товара",
+            "type": "float"
+          },
+          {
+            "name": "sorder_order",
+            "in": "query",
+            "description": "Позиция товара в списке",
+            "type": "integer"
+          },
+          {
+            "name": "image",
+            "in": "query",
+            "description": "Изображение товара",
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "product"
+        ]
+      },
+      "post": {
+        "operationId": "product_create",
+        "description": "Создание нового товара",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Название товара (обязательное поле)",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "Описание товара (необязательное поле)",
+                  "type": "string"
+                },
+                "brand": {
+                  "description": "Название бренда товара (необязательное поле)",
+                  "type": "string"
+                },
+                "category": {
+                  "description": "id категории к которой относится товар (необязательное поле)",
+                  "type": "integer"
+                },
+                "price": {
+                  "description": "Цена товара (по умолчанию 1)",
+                  "type": "integer"
+                },
+                "count": {
+                  "description": "Количество товара (по умолчанию 0)",
+                  "type": "integer"
+                },
+                "rating": {
+                  "description": "Рейтинг товара (по умолчанию 5)",
+                  "type": "float"
+                },
+                "sorder_order": {
+                  "description": "Позиция товара в списке (по умолчанию 1)",
+                  "type": "integer"
+                },
+                "image": {
+                  "description": "Изображение товара (по умолчанию null)",
+                  "type": "file"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Название товара (обязательное поле)",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "Описание товара (необязательное поле)",
+                  "type": "string"
+                },
+                "brand": {
+                  "description": "Название бренда товара (необязательное поле)",
+                  "type": "string"
+                },
+                "category": {
+                  "description": "id категории к которой относится товар (необязательное поле)",
+                  "type": "integer"
+                },
+                "price": {
+                  "description": "Цена товара (по умолчанию 1)",
+                  "type": "integer"
+                },
+                "count": {
+                  "description": "Количество товара (по умолчанию 0)",
+                  "type": "integer"
+                },
+                "rating": {
+                  "description": "Рейтинг товара (по умолчанию 5)",
+                  "type": "float"
+                },
+                "sorder_order": {
+                  "description": "Позиция товара в списке (по умолчанию 1)",
+                  "type": "integer"
+                },
+                "image": {
+                  "description": "Изображение товара (по умолчанию null)",
+                  "type": "file"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "product"
+        ]
+      },
+      "parameters": []
+    },
+    "/product/{id}/": {
+      "get": {
+        "operationId": "product_read",
+        "description": "Получение товара по id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id товара",
+            "type": "integer"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Название товара",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "description": "Описание товара",
+            "type": "string"
+          },
+          {
+            "name": "brand",
+            "in": "query",
+            "description": "Название бренда товара",
+            "type": "string"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "id категории к которой относится товар",
+            "type": "integer"
+          },
+          {
+            "name": "price",
+            "in": "query",
+            "description": "Цена товара",
+            "type": "integer"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "description": "Количество товара",
+            "type": "integer"
+          },
+          {
+            "name": "rating",
+            "in": "query",
+            "description": "Рейтинг товара",
+            "type": "float"
+          },
+          {
+            "name": "sorder_order",
+            "in": "query",
+            "description": "Позиция товара в списке",
+            "type": "integer"
+          },
+          {
+            "name": "image",
+            "in": "query",
+            "description": "Изображение товара",
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "product"
+        ]
+      },
+      "put": {
+        "operationId": "product_update",
+        "description": "Изменение товара по id",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Название товара (обязательное поле)",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "Описание товара (необязательное поле)",
+                  "type": "string"
+                },
+                "brand": {
+                  "description": "Название бренда товара (необязательное поле)",
+                  "type": "string"
+                },
+                "category": {
+                  "description": "id категории к которой относится товар (необязательное поле)",
+                  "type": "integer"
+                },
+                "price": {
+                  "description": "Цена товара (по умолчанию 1)",
+                  "type": "integer"
+                },
+                "count": {
+                  "description": "Количество товара (по умолчанию 0)",
+                  "type": "integer"
+                },
+                "rating": {
+                  "description": "Рейтинг товара (по умолчанию 5)",
+                  "type": "float"
+                },
+                "sorder_order": {
+                  "description": "Позиция товара в списке (по умолчанию 1)",
+                  "type": "integer"
+                },
+                "image": {
+                  "description": "Изображение товара (по умолчанию null)",
+                  "type": "file"
+                }
+              }
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id заказа",
+            "type": "integer",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Название товара (обязательное поле)",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "Описание товара (необязательное поле)",
+                  "type": "string"
+                },
+                "brand": {
+                  "description": "Название бренда товара (необязательное поле)",
+                  "type": "string"
+                },
+                "category": {
+                  "description": "id категории к которой относится товар (необязательное поле)",
+                  "type": "integer"
+                },
+                "price": {
+                  "description": "Цена товара (по умолчанию 1)",
+                  "type": "integer"
+                },
+                "count": {
+                  "description": "Количество товара (по умолчанию 0)",
+                  "type": "integer"
+                },
+                "rating": {
+                  "description": "Рейтинг товара (по умолчанию 5)",
+                  "type": "float"
+                },
+                "sorder_order": {
+                  "description": "Позиция товара в списке (по умолчанию 1)",
+                  "type": "integer"
+                },
+                "image": {
+                  "description": "Изображение товара (по умолчанию null)",
+                  "type": "file"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "product"
+        ]
+      },
+      "delete": {
+        "operationId": "product_delete",
+        "description": "Удаление товара по id",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "description": "id товара",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "product"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/productList/": {
+      "post": {
+        "operationId": "productList_create",
+        "description": "Добавление списка товаров",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "description": "Название товара (обязательное поле)",
+                    "type": "string"
+                  },
+                  "description": {
+                    "description": "Описание товара (необязательное поле)",
+                    "type": "string"
+                  },
+                  "brand": {
+                    "description": "Название бренда товара (необязательное поле)",
+                    "type": "string"
+                  },
+                  "category": {
+                    "description": "id категории к которой относится товар (необязательное поле)",
+                    "type": "integer"
+                  },
+                  "price": {
+                    "description": "Цена товара (по умолчанию 1)",
+                    "type": "integer"
+                  },
+                  "count": {
+                    "description": "Количество товара (по умолчанию 0)",
+                    "type": "integer"
+                  },
+                  "rating": {
+                    "description": "Рейтинг товара (по умолчанию 5)",
+                    "type": "float"
+                  },
+                  "sorder_order": {
+                    "description": "Позиция товара в списке (по умолчанию 1)",
+                    "type": "integer"
+                  },
+                  "image": {
+                    "description": "Изображение товара (по умолчанию null)",
+                    "type": "file"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "description": "Название товара (обязательное поле)",
+                    "type": "string"
+                  },
+                  "description": {
+                    "description": "Описание товара (необязательное поле)",
+                    "type": "string"
+                  },
+                  "brand": {
+                    "description": "Название бренда товара (необязательное поле)",
+                    "type": "string"
+                  },
+                  "category": {
+                    "description": "id категории к которой относится товар (необязательное поле)",
+                    "type": "integer"
+                  },
+                  "price": {
+                    "description": "Цена товара (по умолчанию 1)",
+                    "type": "integer"
+                  },
+                  "count": {
+                    "description": "Количество товара (по умолчанию 0)",
+                    "type": "integer"
+                  },
+                  "rating": {
+                    "description": "Рейтинг товара (по умолчанию 5)",
+                    "type": "float"
+                  },
+                  "sorder_order": {
+                    "description": "Позиция товара в списке (по умолчанию 1)",
+                    "type": "integer"
+                  },
+                  "image": {
+                    "description": "Изображение товара (по умолчанию null)",
+                    "type": "file"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "productList"
+        ]
+      },
+      "parameters": []
+    },
+    "/productStorage/": {
+      "get": {
+        "operationId": "productStorage_list",
+        "description": "Получение информации о товарах на складе",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id product_storage модели",
+            "type": "integer"
+          },
+          {
+            "name": "product",
+            "in": "query",
+            "description": "id товара",
+            "type": "integer"
+          },
+          {
+            "name": "storage",
+            "in": "query",
+            "description": "id склада",
+            "type": "integer"
+          },
+          {
+            "name": "count_product",
+            "in": "query",
+            "description": "Количество товара",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "productStorage"
+        ]
+      },
+      "post": {
+        "operationId": "productStorage_create",
+        "description": "Создание новой записи о товаре на складе",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "storage": {
+                  "description": "id склада",
+                  "type": "integer"
+                },
+                "product": {
+                  "description": "id товара",
+                  "type": "integer"
+                },
+                "count_product": {
+                  "description": "Количество товара",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "storage": {
+                  "description": "id склада",
+                  "type": "integer"
+                },
+                "product": {
+                  "description": "id товара",
+                  "type": "integer"
+                },
+                "count_product": {
+                  "description": "Количество товара",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "productStorage"
+        ]
+      },
+      "parameters": []
+    },
+    "/productStorage/{id}/": {
+      "get": {
+        "operationId": "productStorage_read",
+        "description": "Получение информации о товарах на складе по id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id product_storage модели",
+            "type": "integer"
+          },
+          {
+            "name": "product",
+            "in": "query",
+            "description": "id товара",
+            "type": "integer"
+          },
+          {
+            "name": "storage",
+            "in": "query",
+            "description": "id склада",
+            "type": "integer"
+          },
+          {
+            "name": "count_product",
+            "in": "query",
+            "description": "Количество товара",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "productStorage"
+        ]
+      },
+      "put": {
+        "operationId": "productStorage_update",
+        "description": "Измение информации о товаре на складе по id в url",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "storage": {
+                  "description": "id склада",
+                  "type": "integer"
+                },
+                "product": {
+                  "description": "id товара",
+                  "type": "integer"
+                },
+                "count_product": {
+                  "description": "Количество товара",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "storage": {
+                  "description": "id склада",
+                  "type": "integer"
+                },
+                "product": {
+                  "description": "id товара",
+                  "type": "integer"
+                },
+                "count_product": {
+                  "description": "Количество товара",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "productStorage"
+        ]
+      },
+      "delete": {
+        "operationId": "productStorage_delete",
+        "description": "Удаление информации о товаре на складе по id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id product_storage",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "productStorage"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/productStorageByStorage/{fk}/": {
+      "get": {
+        "operationId": "productStorageByStorage_read",
+        "description": "Получение всех складов с товарами по id склада",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id product_storage модели",
+            "type": "integer"
+          },
+          {
+            "name": "product",
+            "in": "query",
+            "description": "id товара",
+            "type": "integer"
+          },
+          {
+            "name": "storage",
+            "in": "query",
+            "description": "id склада",
+            "type": "integer"
+          },
+          {
+            "name": "count_product",
+            "in": "query",
+            "description": "Количество товара",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "productStorageByStorage"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "fk",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/registration/": {
+      "post": {
+        "operationId": "registration_create",
+        "description": "Регистрация нового пользователя",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "description": "Email пользователя (обязательное поле)",
+                  "type": "email"
+                },
+                "name": {
+                  "description": "Имя пользователя (обязательное поле)",
+                  "type": "string"
+                },
+                "surname": {
+                  "description": "Фамилия пользователя",
+                  "type": "string"
+                },
+                "password": {
+                  "description": "Пароль пользователя(обязательное поле)",
+                  "type": "string"
+                },
+                "is_staff": {
+                  "description": "Если значение True, пользователь является админом",
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "description": "Email пользователя (обязательное поле)",
+                  "type": "email"
+                },
+                "name": {
+                  "description": "Имя пользователя (обязательное поле)",
+                  "type": "string"
+                },
+                "surname": {
+                  "description": "Фамилия пользователя",
+                  "type": "string"
+                },
+                "password": {
+                  "description": "Пароль пользователя(обязательное поле)",
+                  "type": "string"
+                },
+                "is_staff": {
+                  "description": "Если значение True, пользователь является админом",
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "registration"
+        ]
+      },
+      "parameters": []
+    },
+    "/resetPassword/{email}/": {
+      "post": {
+        "operationId": "resetPassword_create",
+        "description": "Проверка кода, который был отправлен на почту",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "new_password": {
+                  "description": "Новый пароль",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "new_password": {
+                  "description": "Новый пароль",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "resetPassword"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "email",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/storage/": {
+      "get": {
+        "operationId": "storage_list",
+        "description": "Получение всех складов",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id склада",
+            "type": "integer"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Название склада",
+            "type": "string"
+          },
+          {
+            "name": "location",
+            "in": "query",
+            "description": "Адрес склада",
+            "type": "string"
+          },
+          {
+            "name": "coordinates",
+            "in": "query",
+            "description": "Координаты склада",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "storage"
+        ]
+      },
+      "post": {
+        "operationId": "storage_create",
+        "description": "Создание нового склада",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Название склада",
+                  "type": "string"
+                },
+                "location": {
+                  "description": "Адрес склада",
+                  "type": "string"
+                },
+                "coordinates": {
+                  "description": "Координаты склада",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Название склада",
+                  "type": "string"
+                },
+                "location": {
+                  "description": "Адрес склада",
+                  "type": "string"
+                },
+                "coordinates": {
+                  "description": "Координаты склада",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "storage"
+        ]
+      },
+      "parameters": []
+    },
+    "/storage/{id}": {
+      "get": {
+        "operationId": "storage_read",
+        "description": "Получение всех складов по id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id пользователя",
+            "type": "integer"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Название склада",
+            "type": "string"
+          },
+          {
+            "name": "location",
+            "in": "query",
+            "description": "Адрес склада",
+            "type": "string"
+          },
+          {
+            "name": "coordinates",
+            "in": "query",
+            "description": "Координаты склада",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "storage"
+        ]
+      },
+      "put": {
+        "operationId": "storage_update",
+        "description": "Изменение склада по id в url",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Название склада",
+                  "type": "string"
+                },
+                "location": {
+                  "description": "Адрес склада",
+                  "type": "string"
+                },
+                "coordinates": {
+                  "description": "Координаты склада",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Название склада",
+                  "type": "string"
+                },
+                "location": {
+                  "description": "Адрес склада",
+                  "type": "string"
+                },
+                "coordinates": {
+                  "description": "Координаты склада",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "storage"
+        ]
+      },
+      "delete": {
+        "operationId": "storage_delete",
+        "description": "Удаление склада по ID",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "storage"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/user/": {
+      "get": {
+        "operationId": "user_list",
+        "description": "Получение данных авторизованного пользователя (все параметры, кроме пароля) ",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id пользователя",
+            "type": "integer"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Почта пользователя",
+            "type": "email"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Имя пользователя",
+            "type": "string"
+          },
+          {
+            "name": "surname",
+            "in": "query",
+            "description": "Фамилия пользователя",
+            "type": "string"
+          },
+          {
+            "name": "is_staff",
+            "in": "query",
+            "description": "Если значение True, пользователь является админом",
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "user"
+        ]
+      },
+      "parameters": []
+    },
+    "/users/": {
+      "get": {
+        "operationId": "users_list",
+        "description": "Получение всех пользователей",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id пользователя",
+            "type": "integer"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Почта пользователя",
+            "type": "email"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Имя пользователя",
+            "type": "string"
+          },
+          {
+            "name": "surname",
+            "in": "query",
+            "description": "Фамилия пользователя",
+            "type": "string"
+          },
+          {
+            "name": "is_staff",
+            "in": "query",
+            "description": "Если значение True, пользователь является админом",
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "users"
+        ]
+      },
+      "parameters": []
+    }
+  },
+  "definitions": {
+
+  }
+}

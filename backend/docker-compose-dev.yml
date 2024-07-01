@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres
+    container_name: database
+    volumes:
+      - pgdbdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+    expose:
+      - 5432
+  backend:
+    container_name: back
+    command: sh -c "python3 manage.py collectstatic --noinput &&
+              python3 manage.py makemigrations &&
+              python3 manage.py migrate &&
+              gunicorn --bind 0.0.0.0:8000 backend.wsgi"
+    build: .
+    volumes:
+      - static-data:/vol/static
+      - media-data:/vol/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      
+volumes:
+  pgdbdata:
+  static-data:
+  media-data:
